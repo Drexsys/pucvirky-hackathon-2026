@@ -4,10 +4,10 @@ import { useAuth } from '../../../contexts/AuthContext.jsx';
 import './Header.css';
 
 const NAV_LINKS = [
-    { to: '/',        icon: '🏠', label: 'Home',         end: true },
-    { to: '/orders',  icon: '📋', label: 'Orders'               },
-    { to: '/import',  icon: '📤', label: 'Import CSV'           },
-    { to: '/create',  icon: '➕', label: 'Create Order'         },
+    { to: '/',        icon: '🏠', label: 'Головна',       end: true },
+    { to: '/orders',  icon: '📋', label: 'Замовлення'            },
+    { to: '/create',  icon: '➕', label: 'Створити'              },
+    { to: '/import',  icon: '📤', label: 'Імпорт CSV'            },
 ];
 
 export default function Header() {
@@ -106,9 +106,6 @@ export default function Header() {
                                     <>
                                         <button onClick={() => handleAccountClick('/login')} className="header__account-item">
                                             <span>🔑</span> Логін
-                                        </button>
-                                        <button onClick={() => handleAccountClick('/register')} className="header__account-item">
-                                            <span>📝</span> Реєстрація
                                         </button>
                                     </>
                                 ) : (

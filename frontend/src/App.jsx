@@ -6,7 +6,6 @@ import OrdersPage from './pages/OrderPage/OrderPage.jsx';
 import ImportPage from './pages/ImportPage/ImportPage.jsx';
 import CreateOrderPage from './pages/CreateOrderPage/CreateOrderPage.jsx';
 import LoginPage from './pages/LoginPage/LoginPage.jsx';
-import RegisterPage from './pages/RegisterPage/RegisterPage.jsx';
 import './App.css';
 
 export default function App() {
@@ -21,7 +20,6 @@ export default function App() {
               <Route path="/import"  element={<ImportPage />}      />
               <Route path="/create"  element={<CreateOrderPage />} />
               <Route path="/login"   element={<LoginPage />}       />
-              <Route path="/register" element={<RegisterPage />}   />
             </Routes>
           </main>
         </div>

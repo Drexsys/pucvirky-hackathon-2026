@@ -12,17 +12,6 @@ export async function login(credentials) {
     return res.json();
 }
 
-export async function register(userData) {
-    const res = await fetch(`${API_BASE}/register`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(userData)
-    });
-    if (!res.ok) {
-        throw new Error("Registration failed");
-    }
-    return res.json();
-}
 
 export async function logout() {
     const res = await fetch(`${API_BASE}/logout`, {

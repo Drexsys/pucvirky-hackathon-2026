@@ -75,10 +75,6 @@ export default function LoginPage() {
           <button type="submit" disabled={loading}>
             {loading ? 'Вхід...' : 'Увійти'}
           </button>
-
-          <p className="signup-link">
-            Немає облікового запису? <Link to="/register">Зареєструватися</Link>
-          </p>
         </form>
       </div>
     </div>

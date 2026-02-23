@@ -3,19 +3,29 @@ import { importOrdersCsv } from '../../api/orders';
 import './ImportPage.css';
 
 export default function ImportPage() {
-  const [csvText, setCsvText] = useState('');
+  const [file, setFile] = useState(null);
   const [result, setResult] = useState(null);
   const [loading, setLoading] = useState(false);
 
+  const handleFileChange = (e) => {
+    const selectedFile = e.target.files[0];
+    setFile(selectedFile);
+    setResult(null);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!file) return;
+
     setLoading(true);
     setResult(null);
 
     try {
-      const data = await importOrdersCsv(csvText);
+      const data = await importOrdersCsv(file);
       setResult(data);
-      setCsvText('');
+      setFile(null);
+      // Reset file input
+      e.target.reset();
     } catch (err) {
       setResult({ error: err.message });
     } finally {
@@ -25,34 +35,53 @@ export default function ImportPage() {
 
   return (
     <div className="import-page">
-      <h1>Import Orders from CSV</h1>
+      <h1>Імпорт замовлень з CSV</h1>
       <form onSubmit={handleSubmit} className="import-form">
-        <label htmlFor="csv-input">Paste CSV content:</label>
-        <textarea
-          id="csv-input"
-          value={csvText}
-          onChange={(e) => setCsvText(e.target.value)}
-          placeholder="customer,product,quantity&#10;John Doe,Widget A,10&#10;Jane Smith,Widget B,5"
-          rows={10}
-          required
-        />
-        <button type="submit" disabled={loading}>
-          {loading ? 'Importing...' : 'Import'}
+        <div className="file-input-wrapper">
+          <label htmlFor="csv-file" className="file-label">
+            📁 Оберіть CSV файл
+          </label>
+          <input
+            type="file"
+            id="csv-file"
+            accept=".csv,text/csv"
+            onChange={handleFileChange}
+            required
+          />
+          {file && <span className="file-name">Обрано: {file.name}</span>}
+        </div>
+
+        <button type="submit" disabled={loading || !file}>
+          {loading ? 'Імпортування...' : 'Імпортувати'}
         </button>
       </form>
 
       {result && (
         <div className={`import-result ${result.error ? 'error' : 'success'}`}>
           {result.error ? (
-            <p>Error: {result.error}</p>
+            <p>❌ Помилка: {result.error}</p>
           ) : (
             <div>
-              <p>✓ Import successful!</p>
-              <ul>
-                <li>Imported: {result.importedCount}</li>
-                <li>Skipped: {result.skippedCount}</li>
-                <li>Total lines: {result.totalCount}</li>
-              </ul>
+              <p className="result-title">✓ Імпорт завершено!</p>
+              <div className="result-stats">
+                <div className="stat-item">
+                  <span className="stat-value">{result.importedCount}</span>
+                  <span className="stat-label">Імпортовано</span>
+                </div>
+                <div className="stat-item">
+                  <span className="stat-value">{result.skippedCount}</span>
+                  <span className="stat-label">Пропущено</span>
+                </div>
+                <div className="stat-item">
+                  <span className="stat-value">{result.totalCount}</span>
+                  <span className="stat-label">Всього рядків</span>
+                </div>
+              </div>
+              {result.skippedCount > 0 && (
+                <p className="warning-text">
+                  ⚠️ Деякі рядки пропущено через помилки форматування
+                </p>
+              )}
             </div>
           )}
         </div>
