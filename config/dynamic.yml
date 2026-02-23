@@ -1,4 +1,0 @@
-tls:
-  certificates:
-    - certFile: /certs/hackathon-2026.crt
-      keyFile: /certs/hackathon-2026.key
