@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { getOrders } from '../../api/orders';
+import OrdersTable from '../../components/orders/OrdersTable';
 import './OrderPage.css';
 
 export default function OrderPage() {
@@ -67,7 +68,7 @@ export default function OrderPage() {
   const handleFilterChange = (e) => {
     const { name, value } = e.target;
     setFilters(prev => ({ ...prev, [name]: value }));
-    setCurrentPage(1); // Reset to first page on filter change
+    setCurrentPage(1);
   };
 
   const resetFilters = () => {
@@ -163,69 +164,32 @@ export default function OrderPage() {
         <span>Всього замовлень: <strong>{orders.length}</strong></span>
       </div>
 
-      {/* Table */}
-      {currentOrders.length === 0 ? (
-        <p className="no-data">Немає замовлень для відображення</p>
-      ) : (
-        <>
-          <div className="table-wrapper">
-            <table className="orders-table">
-              <thead>
-                <tr>
-                  <th>ID</th>
-                  <th>Широта</th>
-                  <th>Довгота</th>
-                  <th>Subtotal</th>
-                  <th>State %</th>
-                  <th>County %</th>
-                  <th>City %</th>
-                  <th>Загальна %</th>
-                  <th>Податок ($)</th>
-                  <th>Загалом</th>
-                  <th>Дата</th>
-                </tr>
-              </thead>
-              <tbody>
-                {currentOrders.map(order => (
-                  <tr key={order.id}>
-                    <td>{order.id}</td>
-                    <td>{order.lat?.toFixed(4) || 'N/A'}</td>
-                    <td>{order.lon?.toFixed(4) || 'N/A'}</td>
-                    <td className="amount">${order.subtotal?.toFixed(2) || '0.00'}</td>
-                    <td className="tax-rate">{order.breakdown?.state_rate ? (order.breakdown.state_rate * 100).toFixed(3) : '0'}%</td>
-                    <td className="tax-rate">{order.breakdown?.county_rate ? (order.breakdown.county_rate * 100).toFixed(3) : '0'}%</td>
-                    <td className="tax-rate">{order.breakdown?.city_rate ? (order.breakdown.city_rate * 100).toFixed(3) : '0'}%</td>
-                    <td className="tax-rate composite">{(order.composite_tax_rate * 100).toFixed(3) || '0'}%</td>
-                    <td className="amount tax">${order.tax_amount?.toFixed(2) || '0.00'}</td>
-                    <td className="amount total">${order.total_amount?.toFixed(2) || '0.00'}</td>
-                    <td>{order.createdAt ? new Date(order.createdAt).toLocaleString('uk-UA') : 'N/A'}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+      {/* Orders Table */}
+      <OrdersTable
+        orders={currentOrders}
+        loading={loading}
+        error={error}
+      />
 
-          {/* Pagination */}
-          {totalPages > 1 && (
-            <div className="pagination">
-              <button
-                onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
-                disabled={currentPage === 1}
-              >
-                ← Попередня
-              </button>
-              <span className="page-info">
-                Сторінка {currentPage} з {totalPages}
-              </span>
-              <button
-                onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
-                disabled={currentPage === totalPages}
-              >
-                Наступна →
-              </button>
-            </div>
-          )}
-        </>
+      {/* Pagination */}
+      {sortedOrders.length > 0 && totalPages > 1 && (
+        <div className="pagination">
+          <button
+            onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+            disabled={currentPage === 1}
+          >
+            ← Попередня
+          </button>
+          <span className="page-info">
+            Сторінка {currentPage} з {totalPages}
+          </span>
+          <button
+            onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+            disabled={currentPage === totalPages}
+          >
+            Наступна →
+          </button>
+        </div>
       )}
     </div>
   );

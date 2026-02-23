@@ -1,0 +1,330 @@
+.orders-table-wrapper {
+  background: white;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.orders-table-loading,
+.orders-table-error,
+.orders-table-empty {
+  padding: 40px;
+  text-align: center;
+  font-size: 16px;
+  color: #64748b;
+}
+
+.orders-table-error {
+  color: #dc2626;
+  background: #fee;
+}
+
+/* Table styles */
+.orders-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.orders-table thead {
+  background: #f8fafc;
+  border-bottom: 2px solid #e2e8f0;
+}
+
+.orders-table th {
+  padding: 12px 16px;
+  text-align: left;
+  font-weight: 600;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #1e293b;
+}
+
+.orders-table th.expand-col {
+  width: 40px;
+  text-align: center;
+}
+
+/* Row styles */
+.orders-table tbody tr {
+  border-bottom: 1px solid #e2e8f0;
+  transition: background-color 0.2s;
+}
+
+.orders-table tbody tr.order-row:hover {
+  background: #f8fafc;
+}
+
+.orders-table td {
+  padding: 14px 16px;
+  font-size: 14px;
+  color: #334155;
+}
+
+.orders-table td.expand-col {
+  text-align: center;
+  width: 40px;
+}
+
+.expand-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  color: #94a3b8;
+  transition: all 0.2s;
+  padding: 0;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.expand-btn:hover {
+  color: #475569;
+}
+
+.expand-btn.expanded {
+  color: #3b82f6;
+  transform: rotate(90deg);
+}
+
+.orders-table td.id {
+  font-weight: 600;
+  color: #1e293b;
+}
+
+.orders-table td.coordinates {
+  font-family: 'Courier New', monospace;
+  font-size: 13px;
+  color: #64748b;
+}
+
+.orders-table td.amount {
+  font-family: 'Courier New', monospace;
+  text-align: right;
+  font-weight: 500;
+}
+
+.orders-table td.rate {
+  text-align: center;
+  font-weight: 500;
+  color: #7c3aed;
+}
+
+.orders-table td.rate.composite {
+  background: #f3e8ff;
+  border-radius: 4px;
+  font-weight: 700;
+}
+
+.orders-table td.tax {
+  color: #ea580c;
+  font-weight: 600;
+}
+
+.orders-table td.total {
+  color: #059669;
+  font-weight: 700;
+}
+
+.orders-table td.date {
+  font-size: 13px;
+  color: #94a3b8;
+}
+
+/* Breakdown row styles */
+.breakdown-row td {
+  padding: 0 !important;
+  background: #f9fafb;
+  border-top: 2px solid #e5e7eb;
+  border-bottom: 2px solid #e5e7eb;
+}
+
+.breakdown-content {
+  padding: 24px;
+}
+
+.breakdown-section {
+  max-width: 1000px;
+}
+
+.breakdown-section h4 {
+  margin: 0 0 16px 0;
+  font-size: 15px;
+  font-weight: 600;
+  color: #1e293b;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.breakdown-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.breakdown-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 12px;
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+}
+
+.breakdown-item.total-rate {
+  background: #f3e8ff;
+  border-color: #e9d5ff;
+  font-weight: 600;
+}
+
+.breakdown-item .label {
+  font-size: 13px;
+  font-weight: 500;
+  color: #64748b;
+}
+
+.breakdown-item .value {
+  font-family: 'Courier New', monospace;
+  font-weight: 600;
+  color: #1e293b;
+  margin-left: 8px;
+}
+
+.breakdown-item.total-rate .value {
+  color: #7c3aed;
+}
+
+/* Special rates */
+.special-rates {
+  margin-bottom: 24px;
+  padding: 16px;
+  background: #fef3c7;
+  border-left: 4px solid #f59e0b;
+  border-radius: 6px;
+}
+
+.special-rates h5 {
+  margin: 0 0 12px 0;
+  font-size: 13px;
+  font-weight: 600;
+  color: #78350f;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.special-rates-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.special-rate-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 6px 0;
+  font-size: 13px;
+  color: #92400e;
+}
+
+.special-rate-item .name {
+  font-weight: 500;
+}
+
+.special-rate-item .value {
+  font-family: 'Courier New', monospace;
+  font-weight: 600;
+}
+
+/* Summary section */
+.breakdown-summary {
+  padding: 16px;
+  background: white;
+  border: 2px solid #dbeafe;
+  border-radius: 6px;
+  display: flex;
+  justify-content: space-around;
+}
+
+.summary-row {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.summary-row .label {
+  font-size: 12px;
+  font-weight: 500;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.summary-row .value {
+  font-family: 'Courier New', monospace;
+  font-size: 18px;
+  font-weight: 700;
+  color: #1e293b;
+}
+
+.summary-row.tax .value {
+  color: #ea580c;
+}
+
+.summary-row.total .value {
+  color: #059669;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .orders-table th,
+  .orders-table td {
+    padding: 10px 12px;
+    font-size: 13px;
+  }
+
+  .breakdown-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .breakdown-summary {
+    flex-direction: column;
+    gap: 12px;
+  }
+}
+
+@media (max-width: 768px) {
+  .orders-table th,
+  .orders-table td {
+    padding: 8px;
+    font-size: 12px;
+  }
+
+  .orders-table th {
+    font-size: 11px;
+  }
+
+  .breakdown-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .breakdown-content {
+    padding: 16px;
+  }
+
+  .breakdown-summary {
+    flex-direction: column;
+    gap: 8px;
+    padding: 12px;
+  }
+
+  .summary-row .value {
+    font-size: 16px;
+  }
+}
+
