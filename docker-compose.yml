@@ -1,0 +1,121 @@
+version: "3.8"
+services:
+#  app:
+#    image: app:1.0.0
+#    build: ./app
+#    env_file:
+#      - .env
+#    depends_on:
+#      - database
+#      - redis
+#    networks:
+#      - hackathon-2026-public
+#      - hackathon-2026-private
+#    labels:
+#      - "traefik.enable=true"
+#      - "traefik.http.routers.app.rule=Host(`app.swarm.localhost`) && PathPrefix(`/api`)"
+#      - "traefik.http.routers.app.entrypoints=websecure"
+#      - "traefik.http.routers.app.tls=true"
+#
+#      - "traefik.http.middlewares.app-strip-api.stripprefix.prefixes=/api"
+#      - "traefik.http.routers.app.middlewares=app-strip-api"
+#
+#      - "traefik.http.services.app-api-svc.loadbalancer.server.port=5000"
+#
+#      - "traefik.http.services.app-api-svc.loadbalancer.healthcheck.path=/health"
+#      - "traefik.http.services.app-api-svc.loadbalancer.healthcheck.interval=10s"
+#      - "traefik.http.services.app-api-svc.loadbalancer.healthcheck.timeout=3s"
+
+  backend:
+    image: backend-hackathon-2026:1.0.0
+    build: ./backend
+    env_file:
+      - .env
+    depends_on:
+      - database
+    networks:
+      - hackathon-2026-private
+      - hackathon-2026-public
+    ports:
+      - 8000:8000
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.app.rule=Host(`app.hackathon-2026`) && PathPrefix(`/api`)"
+      - "traefik.http.routers.app.entrypoints=websecure"
+      - "traefik.http.routers.app.tls=true"
+      - "traefik.http.services.app.loadbalancer.server.port=8000"
+
+  database:
+    image: postgres:16-alpine
+    env_file:
+      - .env
+    networks:
+      - hackathon-2026-private
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+#  redis:
+#    image: redis
+#    networks:
+#      - hackathon-2026-private
+
+  frontend:
+    image: frontend-hackathon-2026:1.0.0
+    build: ./frontend
+    networks:
+      - hackathon-2026-public
+    ports:
+      - 8080:8080
+#    labels:
+#      - "traefik.enable=true"
+#      - "traefik.http.routers.frontend.rule=Host(`app.hackathon-2026`)"
+#      - "traefik.http.routers.frontend.entrypoints=websecure"
+#      - "traefik.http.routers.frontend.tls=true"
+#      - "traefik.http.services.frontend.loadbalancer.server.port=8080"
+
+#  portainer:
+#    image: portainer/portainer-ce:lts
+#    restart: always
+#    networks:
+#      - hackathon-2026-public
+#      - hackathon-2026-private
+#    volumes:
+#      - /var/run/docker.sock:/var/run/docker.sock
+#      - portainer_data:/data
+#    labels:
+#      - "traefik.enable=true"
+#      - "traefik.http.routers.portainer.rule=Host(`portainer.swarm.localhost`)"
+#      - "traefik.http.routers.portainer.entrypoints=websecure"
+#      - "traefik.http.routers.portainer.tls=true"
+#      - "traefik.http.services.portainer.loadbalancer.server.port=9000"
+
+#  traefik:
+#    image: traefik:v3.6
+#    networks:
+#      - hackathon-2026-public
+#    ports:
+#      - "80:80"
+#      - "443:443"
+#    volumes:
+#      - /var/run/docker.sock:/var/run/docker.sock:ro
+#      - ./config/traefik.yml:/etc/traefik/traefik.yml:ro
+#      - ./config/dynamic.yml:/etc/traefik/dynamic/dynamic.yml:ro
+#      - ./certs:/certs:ro
+#    labels:
+#      - "traefik.enable=true"
+#      - "traefik.http.routers.dashboard.rule=Host(`dashboard.hackathon-2026`)"
+#      - "traefik.http.routers.dashboard.entrypoints=websecure"
+#      - "traefik.http.routers.dashboard.tls=true"
+#      - "traefik.http.services.dashboard.loadbalancer.server.port=8080"
+
+volumes:
+  postgres_data:
+    name: postgres_data
+  portainer_data:
+    name: portainer_data
+
+networks:
+  hackathon-2026-private:
+    external: true
+  hackathon-2026-public:
+    external: true
