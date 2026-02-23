@@ -1,0 +1,36 @@
+.order-page {
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.order-page h1 {
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+.orders-table {
+  width: 100%;
+  background: white;
+  border-collapse: collapse;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.orders-table th,
+.orders-table td {
+  padding: 12px 16px;
+  text-align: left;
+  border-bottom: 1px solid #eee;
+}
+
+.orders-table th {
+  background: #f5f5f5;
+  font-weight: 600;
+}
+
+.orders-table tbody tr:hover {
+  background: #f9f9f9;
+}
+
