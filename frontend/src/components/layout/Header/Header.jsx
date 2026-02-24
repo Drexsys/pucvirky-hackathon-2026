@@ -63,21 +63,23 @@ export default function Header() {
                 </Link>
 
                 {/* Desktop nav */}
-                <nav className="header__nav">
-                    {NAV_LINKS.map(({ to, icon, label, end }) => (
-                        <NavLink
-                            key={to}
-                            to={to}
-                            end={end}
-                            className={({ isActive }) =>
-                                `header__nav-link ${isActive ? 'header__nav-link--active' : ''}`
-                            }
-                        >
-                            <span className="header__nav-icon">{icon}</span>
-                            {label}
-                        </NavLink>
-                    ))}
-                </nav>
+                {isAuthenticated && (
+                    <nav className="header__nav">
+                        {NAV_LINKS.map(({ to, icon, label, end }) => (
+                            <NavLink
+                                key={to}
+                                to={to}
+                                end={end}
+                                className={({ isActive }) =>
+                                    `header__nav-link ${isActive ? 'header__nav-link--active' : ''}`
+                                }
+                            >
+                                <span className="header__nav-icon">{icon}</span>
+                                {label}
+                            </NavLink>
+                        ))}
+                    </nav>
+                )}
 
                 {/* Right side */}
                 <div className="header__right">
@@ -124,59 +126,50 @@ export default function Header() {
                     </div>
 
                     {/* Burger */}
-                    <button
-                        className="header__burger"
-                        onClick={() => setMobileOpen((o) => !o)}
-                        aria-label="Toggle menu"
-                    >
-                        <span className="header__burger-line" />
-                        <span className="header__burger-line" />
-                        <span className="header__burger-line" />
-                    </button>
+                    {isAuthenticated && (
+                        <button
+                            className="header__burger"
+                            onClick={() => setMobileOpen((o) => !o)}
+                            aria-label="Toggle menu"
+                        >
+                            <span className="header__burger-line" />
+                            <span className="header__burger-line" />
+                            <span className="header__burger-line" />
+                        </button>
+                    )}
                 </div>
 
             </header>
 
             {/* Mobile dropdown menu */}
-            <div className={`header__mobile-menu ${mobileOpen ? 'header__mobile-menu--open' : ''}`}>
-                {NAV_LINKS.map(({ to, icon, label, end }) => (
-                    <NavLink
-                        key={to}
-                        to={to}
-                        end={end}
-                        className={({ isActive }) =>
-                            `header__mobile-link ${isActive ? 'header__mobile-link--active' : ''}`
-                        }
-                        onClick={closeMobile}
-                    >
-                        <span>{icon}</span>
-                        {label}
-                    </NavLink>
-                ))}
+            {isAuthenticated && (
+                <div className={`header__mobile-menu ${mobileOpen ? 'header__mobile-menu--open' : ''}`}>
+                    {NAV_LINKS.map(({ to, icon, label, end }) => (
+                        <NavLink
+                            key={to}
+                            to={to}
+                            end={end}
+                            className={({ isActive }) =>
+                                `header__mobile-link ${isActive ? 'header__mobile-link--active' : ''}`
+                            }
+                            onClick={closeMobile}
+                        >
+                            <span>{icon}</span>
+                            {label}
+                        </NavLink>
+                    ))}
 
-                <div className="header__mobile-divider" />
+                    <div className="header__mobile-divider" />
 
-                {!isAuthenticated ? (
-                    <>
-                        <button onClick={() => handleAccountClick('/login')} className="header__mobile-link">
-                            <span>🔑</span> Логін
-                        </button>
-                        <button onClick={() => handleAccountClick('/register')} className="header__mobile-link">
-                            <span>📝</span> Реєстрація
-                        </button>
-                    </>
-                ) : (
-                    <>
-                        <div className="header__mobile-user">
-                            <span>👤</span>
-                            <strong>{user?.name || user?.email}</strong>
-                        </div>
-                        <button onClick={handleLogout} className="header__mobile-link header__mobile-logout">
-                            <span>🚪</span> Вийти
-                        </button>
-                    </>
-                )}
-            </div>
+                    <div className="header__mobile-user">
+                        <span>👤</span>
+                        <strong>{user?.name || user?.email}</strong>
+                    </div>
+                    <button onClick={handleLogout} className="header__mobile-link header__mobile-logout">
+                        <span>🚪</span> Вийти
+                    </button>
+                </div>
+            )}
         </>
     );
 }

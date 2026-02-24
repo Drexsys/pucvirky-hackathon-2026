@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { login as loginApi } from '../../api/auth';
 import { useAuth } from '../../contexts/AuthContext';
 import './LoginPage.css';
 
 export default function LoginPage() {
   const navigate = useNavigate();
+  const location = useLocation();
+  const fromPath = location.state?.from?.pathname || '/orders';
   const { login } = useAuth();
   const [formData, setFormData] = useState({
     email: '',
@@ -27,7 +29,7 @@ export default function LoginPage() {
     try {
       const response = await loginApi(formData);
       login(response);
-      navigate('/orders');
+      navigate(fromPath, { replace: true });
     } catch (err) {
       setError(err.message);
     } finally {
@@ -80,4 +82,3 @@ export default function LoginPage() {
     </div>
   );
 }
-
