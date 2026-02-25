@@ -9,7 +9,7 @@ def build():
 
         if image[1] == './backend':
             subprocess.run(['docker', 'build', '-t', image[0], image[1]],
-                                   stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                                   stdout=subprocess.PIPE)
 
         subprocess.run(['docker', 'build', '-t', image[0], image[1]],
-                       stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                       stdout=subprocess.PIPE)
