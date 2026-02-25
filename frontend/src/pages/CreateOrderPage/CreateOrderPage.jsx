@@ -36,6 +36,17 @@ export default function CreateOrderPage() {
     setResult(null);
 
     try {
+      // Validate subtotal is an integer
+      const subtotalValue = parseFloat(formData.subtotal);
+      if (!Number.isInteger(subtotalValue)) {
+        setResult({
+          success: false,
+          error: 'Subtotal must be an integer (whole number). Please remove decimal places.'
+        });
+        setLoading(false);
+        return;
+      }
+
       // Format timestamp as "YYYY-MM-DD HH:mm:ss"
       const now = new Date();
       const timestamp = now.toISOString().replace('T', ' ').substring(0, 19);
@@ -43,7 +54,7 @@ export default function CreateOrderPage() {
       const payload = {
         latitude: parseFloat(formData.latitude),
         longitude: parseFloat(formData.longitude),
-        subtotal: Math.round(parseFloat(formData.subtotal)), // Backend expects int
+        subtotal: subtotalValue, // Backend expects int
         timestamp: timestamp // Format: "2026-02-25 10:30:00"
       };
 
@@ -60,7 +71,7 @@ export default function CreateOrderPage() {
       const errorMsg = err.message || 'Unknown error';
       setResult({
         success: false,
-        error: `${errorMsg}. Make sure the backend is running on port 8000.`
+        error: `${errorMsg}. Please enter valid coordinates`
       });
     } finally {
       setLoading(false);
@@ -103,12 +114,12 @@ export default function CreateOrderPage() {
           <label htmlFor="subtotal">Subtotal:</label>
           <input
             type="number"
-            step="0.01"
+            step="1"
             id="subtotal"
             name="subtotal"
             value={formData.subtotal}
             onChange={handleChange}
-            placeholder="e.g.: 100.00"
+            placeholder="e.g.: 100"
             min="0"
             required
           />

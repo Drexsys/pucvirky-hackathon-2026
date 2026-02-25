@@ -45,7 +45,7 @@ export default function OrdersTable({ orders = [], loading = false, error = null
                 <td className="coordinates">
                   {order.latitude !== null && order.latitude !== undefined ? parseFloat(order.latitude).toFixed(4) : 'N/A'}, {order.longitude !== null && order.longitude !== undefined ? parseFloat(order.longitude).toFixed(4) : 'N/A'}
                 </td>
-                <td className="amount">${order.subtotal !== null && order.subtotal !== undefined ? parseFloat(order.subtotal).toFixed(2) : '0.00'}</td>
+                <td className="amount">${order.subtotal !== null && order.subtotal !== undefined ? parseInt(order.subtotal) : '0'}</td>
                 <td className="rate composite">
                   {order.composite_tax_rate !== null && order.composite_tax_rate !== undefined ? (parseFloat(order.composite_tax_rate) * 100).toFixed(3) : '0.000'}%
                 </td>
@@ -111,7 +111,7 @@ export default function OrdersTable({ orders = [], loading = false, error = null
                         <div className="breakdown-summary">
                           <div className="summary-row">
                             <span className="label">Subtotal:</span>
-                            <span className="value">${order.subtotal !== null && order.subtotal !== undefined ? parseFloat(order.subtotal).toFixed(2) : '0.00'}</span>
+                            <span className="value">${order.subtotal !== null && order.subtotal !== undefined ? parseInt(order.subtotal) : '0'}</span>
                           </div>
                           <div className="summary-row tax">
                             <span className="label">Tax:</span>
