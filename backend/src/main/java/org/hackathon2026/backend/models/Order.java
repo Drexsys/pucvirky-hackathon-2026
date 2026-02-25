@@ -73,4 +73,41 @@ public class Order {
         this.id = id;
     }
 
+    public float getLatitude() {
+        return latitude;
+    }
+    public float getLongitude() {
+        return longitude;
+    }
+    public Integer getSubtotal() {
+        return subtotal;
+    }
+    public String getTimestamp() {
+        return timestamp;
+    }
+    public float getCompositeTaxRate() {
+        return compositeTaxRate;
+    }
+    public float getTaxAmount() {
+        return taxAmount;
+    }
+    public float getTotalAmount() {
+        return totalAmount;
+    }
+    public float getStateRate() {
+        return stateRate;
+    }
+    public float getCountyRate() {
+        return countyRate;
+    }
+    public float getCityRate() {
+        return cityRate;
+    }
+    public float getSpecialRate() {
+        return specialRate;
+    }
+    public String getJurisdictions() {
+        return jurisdictions;
+    }
+
 }
