@@ -4,10 +4,10 @@ import { useAuth } from '../../../contexts/AuthContext.jsx';
 import './Header.css';
 
 const NAV_LINKS = [
-    { to: '/',        icon: '🏠', label: 'Головна',       end: true },
-    { to: '/orders',  icon: '📋', label: 'Замовлення'            },
-    { to: '/create',  icon: '➕', label: 'Створити'              },
-    { to: '/import',  icon: '📤', label: 'Імпорт CSV'            },
+    { to: '/',        icon: '🏠', label: 'Home',          end: true },
+    { to: '/orders',  icon: '📋', label: 'Orders'               },
+    { to: '/create',  icon: '➕', label: 'Create'               },
+    { to: '/import',  icon: '📤', label: 'Import CSV'           },
 ];
 
 export default function Header() {
@@ -97,7 +97,7 @@ export default function Header() {
                         >
                             <span className="header__account-icon">👤</span>
                             <span className="header__account-label">
-                                {isAuthenticated && user ? (user.name || user.email) : 'Акаунт'}
+                                {isAuthenticated && user ? (user.name || user.email) : 'Account'}
                             </span>
                             <span className={`header__account-arrow ${accountOpen ? 'header__account-arrow--open' : ''}`}>▼</span>
                         </button>
@@ -107,7 +107,7 @@ export default function Header() {
                                 {!isAuthenticated ? (
                                     <>
                                         <button onClick={() => handleAccountClick('/login')} className="header__account-item">
-                                            <span>🔑</span> Логін
+                                            <span>🔑</span> Login
                                         </button>
                                     </>
                                 ) : (
@@ -117,7 +117,7 @@ export default function Header() {
                                         </div>
                                         <div className="header__account-divider" />
                                         <button onClick={handleLogout} className="header__account-item header__account-item--logout">
-                                            <span>🚪</span> Вийти
+                                            <span>🚪</span> Log Out
                                         </button>
                                     </>
                                 )}
@@ -166,7 +166,7 @@ export default function Header() {
                         <strong>{user?.name || user?.email}</strong>
                     </div>
                     <button onClick={handleLogout} className="header__mobile-link header__mobile-logout">
-                        <span>🚪</span> Вийти
+                        <span>🚪</span> Log Out
                     </button>
                 </div>
             )}

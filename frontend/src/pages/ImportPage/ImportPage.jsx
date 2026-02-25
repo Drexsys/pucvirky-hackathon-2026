@@ -35,11 +35,11 @@ export default function ImportPage() {
 
   return (
     <div className="import-page">
-      <h1>Імпорт замовлень з CSV</h1>
+      <h1>Import Orders from CSV</h1>
       <form onSubmit={handleSubmit} className="import-form">
         <div className="file-input-wrapper">
           <label htmlFor="csv-file" className="file-label">
-            📁 Оберіть CSV файл
+            📁 Select CSV File
           </label>
           <input
             type="file"
@@ -48,38 +48,38 @@ export default function ImportPage() {
             onChange={handleFileChange}
             required
           />
-          {file && <span className="file-name">Обрано: {file.name}</span>}
+          {file && <span className="file-name">Selected: {file.name}</span>}
         </div>
 
         <button type="submit" disabled={loading || !file}>
-          {loading ? 'Імпортування...' : 'Імпортувати'}
+          {loading ? 'Importing...' : 'Import'}
         </button>
       </form>
 
       {result && (
         <div className={`import-result ${result.error ? 'error' : 'success'}`}>
           {result.error ? (
-            <p>❌ Помилка: {result.error}</p>
+            <p>❌ Error: {result.error}</p>
           ) : (
             <div>
-              <p className="result-title">✓ Імпорт завершено!</p>
+              <p className="result-title">✓ Import Complete!</p>
               <div className="result-stats">
                 <div className="stat-item">
                   <span className="stat-value">{result.importedCount}</span>
-                  <span className="stat-label">Імпортовано</span>
+                  <span className="stat-label">Imported</span>
                 </div>
                 <div className="stat-item">
                   <span className="stat-value">{result.skippedCount}</span>
-                  <span className="stat-label">Пропущено</span>
+                  <span className="stat-label">Skipped</span>
                 </div>
                 <div className="stat-item">
                   <span className="stat-value">{result.totalCount}</span>
-                  <span className="stat-label">Всього рядків</span>
+                  <span className="stat-label">Total Rows</span>
                 </div>
               </div>
               {result.skippedCount > 0 && (
                 <p className="warning-text">
-                  ⚠️ Деякі рядки пропущено через помилки форматування
+                  ⚠️ Some rows were skipped due to formatting errors
                 </p>
               )}
             </div>
@@ -89,4 +89,3 @@ export default function ImportPage() {
     </div>
   );
 }
-

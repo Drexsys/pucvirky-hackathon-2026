@@ -6,5 +6,7 @@ RUN npm ci
 ADD . .
 RUN npm run build
 
-FROM devforth/spa-to-http:latest
-COPY --from=builder /app_web/dist/ .
+FROM nginx:alpine
+COPY --from=builder /app_web/dist/ /usr/share/nginx/html
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+EXPOSE 8080

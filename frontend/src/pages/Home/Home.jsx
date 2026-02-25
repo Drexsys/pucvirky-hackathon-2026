@@ -18,34 +18,34 @@ function Home() {
   return (
     <main className="home">
       <h1 className="home__title">🚁 DroneDeliver Admin</h1>
-      <p className="home__subtitle">Система управління замовленнями з автоматичним розрахунком податків</p>
+      <p className="home__subtitle">Order management system with automatic tax calculation</p>
 
       <div className="home__features">
         <Link to="/create" className="home__card" onClick={handleProtectedClick('/create')}>
           <div className="card__icon">➕</div>
-          <h3>Створити замовлення</h3>
-          <p>Введіть координати (lat, lon) та суму — податок розрахується автоматично</p>
+          <h3>Create Order</h3>
+          <p>Enter coordinates (lat, lon) and amount — tax will be calculated automatically</p>
         </Link>
 
         <Link to="/import" className="home__card" onClick={handleProtectedClick('/import')}>
           <div className="card__icon">📤</div>
-          <h3>Імпорт CSV</h3>
-          <p>Завантажте CSV файл із замовленнями для масової обробки</p>
+          <h3>Import CSV</h3>
+          <p>Upload a CSV file with orders for bulk processing</p>
         </Link>
 
         <Link to="/orders" className="home__card" onClick={handleProtectedClick('/orders')}>
           <div className="card__icon">📋</div>
-          <h3>Список замовлень</h3>
-          <p>Перегляд всіх замовлень з фільтрацією, сортуванням та пагінацією</p>
+          <h3>Orders List</h3>
+          <p>View all orders with filtering, sorting, and pagination</p>
         </Link>
       </div>
 
       <div className="home__info">
-        <h3>Як це працює?</h3>
+        <h3>How does it work?</h3>
         <ol>
-          <li>Створіть замовлення вручну або імпортуйте з CSV</li>
-          <li>Система автоматично розраховує податок на основі координат</li>
-          <li>Переглядайте всі замовлення з розрахованими податками в таблиці</li>
+          <li>Create an order manually or import from CSV</li>
+          <li>The system automatically calculates tax based on coordinates</li>
+          <li>View all orders with calculated taxes in a table</li>
         </ol>
       </div>
     </main>
