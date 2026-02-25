@@ -3,6 +3,7 @@ package org.hackathon2026.backend.models;
 import jakarta.persistence.*;
 import org.hackathon2026.backend.dto.BaseRates;
 
+import java.time.Instant;
 import java.util.List;
 
 @Entity
@@ -15,7 +16,7 @@ public class Order {
 
     private float latitude, longitude;
     private int subtotal;
-    private String timestamp;
+    private Instant timestamp;
 
     private float compositeTaxRate;
     private float taxAmount;
@@ -34,7 +35,9 @@ public class Order {
         this.latitude = latitude;
         this.longitude = longitude;
         this.subtotal = subtotal;
-        this.timestamp = timestamp;
+
+        var timeT = timestamp.split(" ");
+        this.timestamp = Instant.parse(timeT[0] + "T" + timeT[1] + "Z");
 
         calculateTax(baseRates);
     }
@@ -82,7 +85,7 @@ public class Order {
     public Integer getSubtotal() {
         return subtotal;
     }
-    public String getTimestamp() {
+    public Instant getTimestamp() {
         return timestamp;
     }
     public float getCompositeTaxRate() {
