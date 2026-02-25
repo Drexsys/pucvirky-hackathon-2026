@@ -18,7 +18,6 @@ export default function OrdersTable({ orders = [], loading = false, error = null
         <thead>
           <tr>
             <th className="expand-col">▼</th>
-            <th>ID</th>
             <th>Координати</th>
             <th>Subtotal</th>
             <th>Загальна ставка</th>
@@ -43,7 +42,6 @@ export default function OrdersTable({ orders = [], loading = false, error = null
                     ▶
                   </button>
                 </td>
-                <td className="id">{order.id}</td>
                 <td className="coordinates">
                   {order.latitude !== null && order.latitude !== undefined ? parseFloat(order.latitude).toFixed(4) : 'N/A'}, {order.longitude !== null && order.longitude !== undefined ? parseFloat(order.longitude).toFixed(4) : 'N/A'}
                 </td>
@@ -61,7 +59,7 @@ export default function OrdersTable({ orders = [], loading = false, error = null
 
               {expandedId === order.id && (
                 <tr className="breakdown-row">
-                  <td colSpan="9">
+                  <td colSpan="8">
                     <div className="breakdown-content">
                       <div className="breakdown-section">
                         <h4>Деталізація податків</h4>
