@@ -19,19 +19,13 @@ public class OrderService {
 
     public Page<Order> findOrders(
             Pageable pageable,
-            Double minSubtotal,
-            Double maxSubtotal,
-            Instant fromTs,
-            Instant toTs,
-            Double minLat,
-            Double maxLat,
-            Double minLon,
-            Double maxLon
+            Integer minSubtotal, Integer maxSubtotal,
+            Instant fromTs, Instant toTs,
+            String otherJurisdictions
     ) {
         Specification<Order> spec = Specification.where(OrderSpecification.subtotalBetween(minSubtotal, maxSubtotal))
                 .and(OrderSpecification.timestampBetween(fromTs, toTs))
-                .and(OrderSpecification.latitudeBetween(minLat, maxLat))
-                .and(OrderSpecification.longitudeBetween(minLon, maxLon));
+                .and(OrderSpecification.jurisdictionsEqual(otherJurisdictions));
 
         return orderRepository.findAll(spec, pageable);
     }

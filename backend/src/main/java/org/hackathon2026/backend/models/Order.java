@@ -59,9 +59,10 @@ public class Order {
                     this.specialRate = baseRates.get(i).getRate();break;
             }
 
-            this.jurisdictions = new StringBuilder().append(this.jurisdictions)
-                    .append(baseRates.get(i).getJurName())
-                    .append(" ").toString();
+            if (i < 8)
+                this.jurisdictions = new StringBuilder().append(this.jurisdictions)
+                        .append(baseRates.get(i).getJurName())
+                        .append((i != 4) ? " " : "").toString();
         }
 
         this.taxAmount = this.subtotal * this.compositeTaxRate;

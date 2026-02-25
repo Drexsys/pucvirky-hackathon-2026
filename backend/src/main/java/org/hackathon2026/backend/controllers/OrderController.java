@@ -1,5 +1,6 @@
 package org.hackathon2026.backend.controllers;
 
+import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.validation.Valid;
 import org.apache.coyote.BadRequestException;
 import org.hackathon2026.backend.dto.GetTaxRateDto;
@@ -34,24 +35,42 @@ public class OrderController {
 
     @GetMapping
     public Iterable<Order> getOrders(
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int pageSize,
+            @RequestParam(defaultValue = "0") Integer page,
+            @RequestParam(defaultValue = "10") Integer pageSize,
+
+            @RequestParam(required = false) Integer fromSubtotal,
+            @RequestParam(required = false) Integer toSubtotal,
 
             @RequestParam(required = false) String fromTime,
-            @RequestParam(required = false) String toTime
-    ) {
-        var fTimeT = fromTime.split(" ");
-        Instant fromTimeI = Instant.parse(fTimeT[0] + "T" + fTimeT[1] + "Z");
+            @RequestParam(required = false) String toTime,
 
-        var tTimeT = toTime.split(" ");
-        Instant toTimeI = Instant.parse(tTimeT[0] + "T" + tTimeT[1] + "Z");
+            @RequestParam(required = false) String jurisdictions
+    ) {
+        Instant fromTimeI = null, toTimeI = null;
+
+        if (fromTime != null) {
+            var fTimeT = fromTime.split(" ");
+            fromTimeI = Instant.parse(fTimeT[0] + "T" + fTimeT[1] + "Z");
+        }
+
+        if (toTime != null) {
+            var tTimeT = toTime.split(" ");
+            toTimeI = Instant.parse(tTimeT[0] + "T" + tTimeT[1] + "Z");
+        }
+
+        if (toTimeI != null && fromTimeI != null) {
+            if (fromTimeI.isAfter(toTimeI)) {
+                var ttt = fromTimeI;
+                fromTimeI = toTimeI;
+                toTimeI = ttt;
+            }
+        }
 
         return orderService.findOrders(
                 PageRequest.of(page, pageSize),
-                null, null,
+                fromSubtotal, toSubtotal,
                 fromTimeI, toTimeI,
-                null, null,
-                null, null
+                jurisdictions
         );
     }
 

@@ -7,7 +7,7 @@ import java.time.Instant;
 
 public class OrderSpecification {
 
-    public static Specification<Order> subtotalBetween(Double min, Double max) {
+    public static Specification<Order> subtotalBetween(Integer min, Integer max) {
         return (root, query, cb) -> {
             if (min == null && max == null) return cb.conjunction();
             if (min == null) return cb.lessThanOrEqualTo(root.get("subtotal"), max);
@@ -25,21 +25,10 @@ public class OrderSpecification {
         };
     }
 
-    public static Specification<Order> latitudeBetween(Double min, Double max) {
+    public static Specification<Order> jurisdictionsEqual(String otherJurisdictions) {
         return (root, query, cb) -> {
-            if (min == null && max == null) return cb.conjunction();
-            if (min == null) return cb.lessThanOrEqualTo(root.get("latitude"), max);
-            if (max == null) return cb.greaterThanOrEqualTo(root.get("latitude"), min);
-            return cb.between(root.get("latitude"), min, max);
-        };
-    }
-
-    public static Specification<Order> longitudeBetween(Double min, Double max) {
-        return (root, query, cb) -> {
-            if (min == null && max == null) return cb.conjunction();
-            if (min == null) return cb.lessThanOrEqualTo(root.get("longitude"), max);
-            if (max == null) return cb.greaterThanOrEqualTo(root.get("longitude"), min);
-            return cb.between(root.get("longitude"), min, max);
+            if (otherJurisdictions == null) return cb.conjunction();
+            return cb.equal(root.get("jurisdictions"), otherJurisdictions);
         };
     }
 }
