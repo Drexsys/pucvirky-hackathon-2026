@@ -40,7 +40,7 @@ export default function LoginPage() {
   return (
     <div className="login-page">
       <div className="login-container">
-        <h1>Вхід</h1>
+        <h1>Login</h1>
         <form onSubmit={handleSubmit} className="login-form">
           <div className="form-group">
             <label htmlFor="email">Email:</label>
@@ -56,7 +56,7 @@ export default function LoginPage() {
           </div>
 
           <div className="form-group">
-            <label htmlFor="password">Пароль:</label>
+            <label htmlFor="password">Password:</label>
             <input
               type="password"
               id="password"
@@ -75,7 +75,7 @@ export default function LoginPage() {
           )}
 
           <button type="submit" disabled={loading}>
-            {loading ? 'Вхід...' : 'Увійти'}
+            {loading ? 'Logging in...' : 'Log In'}
           </button>
         </form>
       </div>

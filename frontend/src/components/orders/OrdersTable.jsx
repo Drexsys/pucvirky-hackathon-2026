@@ -4,9 +4,9 @@ import './OrdersTable.css';
 export default function OrdersTable({ orders = [], loading = false, error = null }) {
   const [expandedId, setExpandedId] = useState(null);
 
-  if (loading) return <div className="orders-table-loading">Завантаження замовлень...</div>;
-  if (error) return <div className="orders-table-error">Помилка: {error}</div>;
-  if (!orders || orders.length === 0) return <div className="orders-table-empty">Немає замовлень</div>;
+  if (loading) return <div className="orders-table-loading">Loading orders...</div>;
+  if (error) return <div className="orders-table-error">Error: {error}</div>;
+  if (!orders || orders.length === 0) return <div className="orders-table-empty">No orders found</div>;
 
   const toggleExpand = (id) => {
     setExpandedId(expandedId === id ? null : id);
@@ -18,13 +18,13 @@ export default function OrdersTable({ orders = [], loading = false, error = null
         <thead>
           <tr>
             <th className="expand-col">▼</th>
-            <th>Координати</th>
+            <th>Coordinates</th>
             <th>Subtotal</th>
-            <th>Загальна ставка</th>
-            <th>Податок ($)</th>
-            <th>Загалом</th>
-            <th>Юрисдикція</th>
-            <th>Дата</th>
+            <th>Composite Rate</th>
+            <th>Tax ($)</th>
+            <th>Total</th>
+            <th>Jurisdiction</th>
+            <th>Date</th>
           </tr>
         </thead>
         <tbody>
@@ -62,7 +62,7 @@ export default function OrdersTable({ orders = [], loading = false, error = null
                   <td colSpan="8">
                     <div className="breakdown-content">
                       <div className="breakdown-section">
-                        <h4>Деталізація податків</h4>
+                        <h4>Tax Breakdown</h4>
 
                         <div className="breakdown-grid">
                           <div className="breakdown-item">
@@ -96,7 +96,7 @@ export default function OrdersTable({ orders = [], loading = false, error = null
 
                         {order.breakdown?.special_rates && order.breakdown.special_rates.length > 0 && (
                           <div className="special-rates">
-                            <h5>Спеціальні ставки:</h5>
+                            <h5>Special Rates:</h5>
                             <div className="special-rates-list">
                               {order.breakdown.special_rates.map((rate, idx) => (
                                 <div key={idx} className="special-rate-item">
@@ -114,11 +114,11 @@ export default function OrdersTable({ orders = [], loading = false, error = null
                             <span className="value">${order.subtotal !== null && order.subtotal !== undefined ? parseFloat(order.subtotal).toFixed(2) : '0.00'}</span>
                           </div>
                           <div className="summary-row tax">
-                            <span className="label">Податок:</span>
+                            <span className="label">Tax:</span>
                             <span className="value">${order.tax_amount !== null && order.tax_amount !== undefined ? parseFloat(order.tax_amount).toFixed(2) : '0.00'}</span>
                           </div>
                           <div className="summary-row total">
-                            <span className="label">Загалом:</span>
+                            <span className="label">Total:</span>
                             <span className="value">${order.total_amount !== null && order.total_amount !== undefined ? parseFloat(order.total_amount).toFixed(2) : '0.00'}</span>
                           </div>
                         </div>

@@ -35,7 +35,7 @@ export default function OrderPage() {
   });
   const [showFilters, setShowFilters] = useState(true);
 
-  // Debounce: оновлюємо debouncedBackendFilters через 500ms після останньої зміни
+  // Debounce: update debouncedBackendFilters 500ms after the last change
   useEffect(() => {
     if (debounceTimer.current) clearTimeout(debounceTimer.current);
     debounceTimer.current = setTimeout(() => {
@@ -99,23 +99,23 @@ export default function OrderPage() {
     setCurrentPage(1);
   };
 
-  // Підрахунок активних фільтрів
+  // Count active filters
   const activeFiltersCount = Object.values(filters).filter(v => v !== '').length;
 
-  // Тільки перше завантаження показує повний екран загрузки
-  if (initialLoading) return <div className="order-page"><div className="loading">Завантаження замовлень...</div></div>;
+  // Only the first load shows a full loading screen
+  if (initialLoading) return <div className="order-page"><div className="loading">Loading orders...</div></div>;
 
   return (
     <div className="order-page">
-      <h1>Список замовлень</h1>
+      <h1>Orders</h1>
 
-      {error && <div className="error-inline">⚠️ Помилка: {error}</div>}
+      {error && <div className="error-inline">⚠️ Error: {error}</div>}
 
       {/* Filters */}
       <div className="filters-section">
         <div className="filters-header">
           <h3>
-            🔍 Фільтри
+            🔍 Filters
             {activeFiltersCount > 0 && (
               <span className="active-filters-badge">{activeFiltersCount}</span>
             )}
@@ -123,26 +123,26 @@ export default function OrderPage() {
           <div className="filters-actions">
             {activeFiltersCount > 0 && (
               <button onClick={resetFilters} className="reset-btn">
-                ✖ Скинути всі
+                ✖ Reset All
               </button>
             )}
             <button
               onClick={() => setShowFilters(!showFilters)}
               className="toggle-filters-btn"
             >
-              {showFilters ? '▲ Згорнути' : '▼ Розгорнути'}
+              {showFilters ? '▲ Collapse' : '▼ Expand'}
             </button>
           </div>
         </div>
 
         {showFilters && (
           <div className="filters-content">
-            {/* Фільтри по Subtotal */}
+            {/* Subtotal filters */}
             <div className="filter-section">
               <h4>💰 Subtotal</h4>
               <div className="filters-grid">
                 <div className="filter-group">
-                  <label>Мін. Subtotal ($):</label>
+                  <label>Min Subtotal ($):</label>
                   <input
                     type="number"
                     name="minSubtotal"
@@ -153,7 +153,7 @@ export default function OrderPage() {
                   />
                 </div>
                 <div className="filter-group">
-                  <label>Макс. Subtotal ($):</label>
+                  <label>Max Subtotal ($):</label>
                   <input
                     type="number"
                     name="maxSubtotal"
@@ -166,12 +166,12 @@ export default function OrderPage() {
               </div>
             </div>
 
-            {/* Фільтр по даті */}
+            {/* Date filter */}
             <div className="filter-section">
-              <h4>📅 Період</h4>
+              <h4>📅 Date Range</h4>
               <div className="filters-grid">
                 <div className="filter-group">
-                  <label>Дата від:</label>
+                  <label>Date From:</label>
                   <input
                     type="date"
                     name="dateFrom"
@@ -180,7 +180,7 @@ export default function OrderPage() {
                   />
                 </div>
                 <div className="filter-group">
-                  <label>Дата до:</label>
+                  <label>Date To:</label>
                   <input
                     type="date"
                     name="dateTo"
@@ -191,17 +191,17 @@ export default function OrderPage() {
               </div>
             </div>
 
-            {/* Фільтр по юрисдикції */}
+            {/* Jurisdiction filter */}
             <div className="filter-section">
-              <h4>🏛️ Юрисдикція</h4>
+              <h4>🏛️ Jurisdiction</h4>
               <div className="filter-group full-width">
-                <label>Юрисдикція (точний збіг):</label>
+                <label>Jurisdiction (exact match):</label>
                 <input
                   type="text"
                   name="jurisdictions"
                   value={filters.jurisdictions}
                   onChange={handleFilterChange}
-                  placeholder="Наприклад: NEW YORK KINGS NEW YORK CITY"
+                  placeholder="e.g.: NEW YORK KINGS NEW YORK CITY"
                 />
               </div>
             </div>
@@ -211,9 +211,9 @@ export default function OrderPage() {
 
       {/* Stats */}
       <div className="stats-bar">
-        <span>Показано: <strong>{orders.length}</strong> з <strong>{totalElements}</strong></span>
-        <span>Сторінка {currentPage} з {totalPages || 1}</span>
-        {refreshing && <span className="refreshing-indicator">⏳ Оновлення...</span>}
+        <span>Showing: <strong>{orders.length}</strong> of <strong>{totalElements}</strong></span>
+        <span>Page {currentPage} of {totalPages || 1}</span>
+        {refreshing && <span className="refreshing-indicator">⏳ Refreshing...</span>}
       </div>
 
       {/* Orders Table */}
@@ -232,16 +232,16 @@ export default function OrderPage() {
             onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
             disabled={currentPage === 1}
           >
-            ← Попередня
+            ← Previous
           </button>
           <span className="page-info">
-            Сторінка {currentPage} з {totalPages}
+            Page {currentPage} of {totalPages}
           </span>
           <button
             onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
             disabled={currentPage === totalPages}
           >
-            Наступна →
+            Next →
           </button>
         </div>
       )}

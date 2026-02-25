@@ -7,7 +7,7 @@ export function AuthProvider({ children }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Перевіряємо, чи є збережений користувач
+    // Check if there is a saved user
     const savedUser = localStorage.getItem('user');
     if (savedUser) {
       try {
@@ -17,7 +17,7 @@ export function AuthProvider({ children }) {
         localStorage.removeItem('user');
       }
     } else {
-      // ТЕСТУВАННЯ: Автоматичний логін з захардкодованими даними
+      // TESTING: Auto-login with hardcoded credentials
       const testUser = {
         id: 1,
         email: 'test@example.com',
