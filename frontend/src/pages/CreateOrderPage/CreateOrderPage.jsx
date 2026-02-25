@@ -2,10 +2,24 @@ import React, { useState } from 'react';
 import { createOrder, calculateTax } from '../../api/orders';
 import './CreateOrderPage.css';
 
+// Утилітна функція для безпечного форматування чисел
+const formatNumber = (value, decimals = 2) => {
+  if (value === null || value === undefined) return '0.' + '0'.repeat(decimals);
+
+  const num = typeof value === 'string' ? parseFloat(value) : value;
+
+  if (isNaN(num)) {
+    console.warn(`formatNumber: Invalid number value:`, value);
+    return '0.' + '0'.repeat(decimals);
+  }
+
+  return num.toFixed(decimals);
+};
+
 export default function CreateOrderPage() {
   const [formData, setFormData] = useState({
-    lat: '',
-    lon: '',
+    latitude: '',
+    longitude: '',
     subtotal: ''
   });
   const [preview, setPreview] = useState(null);
@@ -18,16 +32,16 @@ export default function CreateOrderPage() {
     setFormData(newData);
 
     // Preview tax calculation if all fields filled
-    if (newData.lat && newData.lon && newData.subtotal) {
-      previewTax(parseFloat(newData.lat), parseFloat(newData.lon), parseFloat(newData.subtotal));
+    if (newData.latitude && newData.longitude && newData.subtotal) {
+      previewTax(parseFloat(newData.latitude), parseFloat(newData.longitude), parseFloat(newData.subtotal));
     } else {
       setPreview(null);
     }
   };
 
-  const previewTax = async (lat, lon, subtotal) => {
+  const previewTax = async (latitude, longitude, subtotal) => {
     try {
-      const taxData = await calculateTax(lat, lon, subtotal);
+      const taxData = await calculateTax(latitude, longitude, subtotal);
       setPreview(taxData);
     } catch (err) {
       setPreview(null);
@@ -40,18 +54,33 @@ export default function CreateOrderPage() {
     setResult(null);
 
     try {
+      // Форматування timestamp у формат "YYYY-MM-DD HH:mm:ss"
+      const now = new Date();
+      const timestamp = now.toISOString().replace('T', ' ').substring(0, 19);
+
       const payload = {
-        lat: parseFloat(formData.lat),
-        lon: parseFloat(formData.lon),
-        subtotal: parseFloat(formData.subtotal)
+        latitude: parseFloat(formData.latitude),
+        longitude: parseFloat(formData.longitude),
+        subtotal: Math.round(parseFloat(formData.subtotal)), // Backend очікує int
+        timestamp: timestamp // Формат: "2026-02-25 10:30:00"
       };
 
       const order = await createOrder(payload);
-      setResult({ success: true, order });
-      setFormData({ lat: '', lon: '', subtotal: '' });
+      // Зберігаємо дані для відображення перед очищенням
+      setResult({ 
+        success: true, 
+        order,
+        savedData: { ...payload }
+      });
+      setFormData({ latitude: '', longitude: '', subtotal: '' });
       setPreview(null);
     } catch (err) {
-      setResult({ success: false, error: err.message });
+      console.error('Error:', err);
+      const errorMsg = err.message || 'Невідома помилка';
+      setResult({
+        success: false,
+        error: `${errorMsg}. Переконайтеся, що бекенд запущений на порті 8000.`
+      });
     } finally {
       setLoading(false);
     }
@@ -62,13 +91,13 @@ export default function CreateOrderPage() {
       <h1>Створити замовлення вручну</h1>
       <form onSubmit={handleSubmit} className="create-order-form">
         <div className="form-group">
-          <label htmlFor="lat">Широта (Latitude):</label>
+          <label htmlFor="latitude">Широта (Latitude):</label>
           <input
             type="number"
             step="any"
-            id="lat"
-            name="lat"
-            value={formData.lat}
+            id="latitude"
+            name="latitude"
+            value={formData.latitude}
             onChange={handleChange}
             placeholder="наприклад: 40.7128"
             required
@@ -76,13 +105,13 @@ export default function CreateOrderPage() {
         </div>
 
         <div className="form-group">
-          <label htmlFor="lon">Довгота (Longitude):</label>
+          <label htmlFor="longitude">Довгота (Longitude):</label>
           <input
             type="number"
             step="any"
-            id="lon"
-            name="lon"
-            value={formData.lon}
+            id="longitude"
+            name="longitude"
+            value={formData.longitude}
             onChange={handleChange}
             placeholder="наприклад: -74.0060"
             required
@@ -109,31 +138,31 @@ export default function CreateOrderPage() {
             <h4>Попередній розрахунок:</h4>
             <div className="preview-row">
               <span>Subtotal:</span>
-              <span className="amount">${preview.subtotal?.toFixed(2)}</span>
+              <span className="amount">${formatNumber(preview.subtotal, 2)}</span>
             </div>
             <div className="preview-row highlight">
               <span>Загальна ставка:</span>
-              <span className="rate">{(preview.composite_tax_rate * 100).toFixed(3)}%</span>
+              <span className="rate">{formatNumber(parseFloat(preview.composite_tax_rate || 0) * 100, 3)}%</span>
             </div>
             {preview.breakdown && (
               <>
                 <div className="breakdown-title">Деталізація:</div>
-                {preview.breakdown.state_rate && (
+                {preview.breakdown.state_rate !== undefined && preview.breakdown.state_rate !== null && (
                   <div className="breakdown-row">
                     <span>State:</span>
-                    <span>{(preview.breakdown.state_rate * 100).toFixed(3)}%</span>
+                    <span>{formatNumber(parseFloat(preview.breakdown.state_rate || 0) * 100, 3)}%</span>
                   </div>
                 )}
-                {preview.breakdown.county_rate && (
+                {preview.breakdown.county_rate !== undefined && preview.breakdown.county_rate !== null && (
                   <div className="breakdown-row">
                     <span>County:</span>
-                    <span>{(preview.breakdown.county_rate * 100).toFixed(3)}%</span>
+                    <span>{formatNumber(parseFloat(preview.breakdown.county_rate || 0) * 100, 3)}%</span>
                   </div>
                 )}
-                {preview.breakdown.city_rate && (
+                {preview.breakdown.city_rate !== undefined && preview.breakdown.city_rate !== null && (
                   <div className="breakdown-row">
                     <span>City:</span>
-                    <span>{(preview.breakdown.city_rate * 100).toFixed(3)}%</span>
+                    <span>{formatNumber(parseFloat(preview.breakdown.city_rate || 0) * 100, 3)}%</span>
                   </div>
                 )}
                 {preview.breakdown.special_rates && preview.breakdown.special_rates.length > 0 && (
@@ -142,7 +171,7 @@ export default function CreateOrderPage() {
                     {preview.breakdown.special_rates.map((rate, idx) => (
                       <div key={idx} className="breakdown-row">
                         <span>{rate.name}:</span>
-                        <span>{(rate.value * 100).toFixed(3)}%</span>
+                        <span>{formatNumber(parseFloat(rate.value || 0) * 100, 3)}%</span>
                       </div>
                     ))}
                   </div>
@@ -151,11 +180,11 @@ export default function CreateOrderPage() {
             )}
             <div className="preview-row total">
               <span>Податок:</span>
-              <span className="tax-amount">${preview.tax_amount?.toFixed(2)}</span>
+              <span className="tax-amount">${formatNumber(preview.tax_amount, 2)}</span>
             </div>
             <div className="preview-row total">
               <span>Загалом:</span>
-              <span className="total-amount">${preview.total_amount?.toFixed(2)}</span>
+              <span className="total-amount">${formatNumber(preview.total_amount, 2)}</span>
             </div>
           </div>
         )}
@@ -171,12 +200,11 @@ export default function CreateOrderPage() {
             <div>
               <p>✓ Замовлення успішно створено!</p>
               <div className="result-details">
-                <p><strong>ID:</strong> {result.order.id}</p>
-                <p><strong>Координати:</strong> ({result.order.lat?.toFixed(4)}, {result.order.lon?.toFixed(4)})</p>
-                <p><strong>Subtotal:</strong> ${result.order.subtotal?.toFixed(2)}</p>
-                <p><strong>Загальна ставка:</strong> {(result.order.composite_tax_rate * 100).toFixed(3)}%</p>
-                <p><strong>Податок:</strong> ${result.order.tax_amount?.toFixed(2)}</p>
-                <p><strong>Загальна сума:</strong> ${result.order.total_amount?.toFixed(2)}</p>
+                <p><strong>Координати:</strong> ({formatNumber(result.savedData.latitude, 4)}, {formatNumber(result.savedData.longitude, 4)})</p>
+                <p><strong>Subtotal:</strong> ${result.savedData.subtotal}</p>
+                <p className="message" style={{ marginTop: '1rem', color: '#666', fontStyle: 'italic' }}>
+                  Замовлення збережено в базі даних
+                </p>
               </div>
             </div>
           ) : (

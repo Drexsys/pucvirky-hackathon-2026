@@ -1,69 +1,86 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback, useRef } from 'react';
 import { getOrders } from '../../api/orders';
 import OrdersTable from '../../components/orders/OrdersTable';
 import './OrderPage.css';
 
 export default function OrderPage() {
   const [orders, setOrders] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [initialLoading, setInitialLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState(null);
 
-  // Pagination
+  // Pagination (backend-driven)
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(10);
+  const [totalPages, setTotalPages] = useState(0);
+  const [totalElements, setTotalElements] = useState(0);
 
-  // Filters
+  // Debounced backend filter values
+  const [debouncedBackendFilters, setDebouncedBackendFilters] = useState({
+    minSubtotal: '',
+    maxSubtotal: '',
+    dateFrom: '',
+    dateTo: '',
+    jurisdictions: '',
+  });
+  const debounceTimer = useRef(null);
+
+  // Filters — only backend-supported
   const [filters, setFilters] = useState({
     minSubtotal: '',
     maxSubtotal: '',
-    minTax: '',
-    maxTax: '',
-    sortBy: 'id',
-    sortOrder: 'desc'
+    dateFrom: '',
+    dateTo: '',
+    jurisdictions: '',
   });
+  const [showFilters, setShowFilters] = useState(true);
 
+  // Debounce: оновлюємо debouncedBackendFilters через 500ms після останньої зміни
   useEffect(() => {
-    loadOrders();
-  }, []);
+    if (debounceTimer.current) clearTimeout(debounceTimer.current);
+    debounceTimer.current = setTimeout(() => {
+      setDebouncedBackendFilters({
+        minSubtotal: filters.minSubtotal,
+        maxSubtotal: filters.maxSubtotal,
+        dateFrom: filters.dateFrom,
+        dateTo: filters.dateTo,
+        jurisdictions: filters.jurisdictions,
+      });
+    }, 500);
+    return () => clearTimeout(debounceTimer.current);
+  }, [filters.minSubtotal, filters.maxSubtotal, filters.dateFrom, filters.dateTo, filters.jurisdictions]);
 
-  const loadOrders = async () => {
-    setLoading(true);
+  const loadOrders = useCallback(async () => {
+    setRefreshing(true);
     try {
-      const data = await getOrders();
-      setOrders(Array.isArray(data) ? data : []);
+      const params = {
+        page: currentPage - 1,
+        pageSize: itemsPerPage
+      };
+
+      if (debouncedBackendFilters.minSubtotal) params.fromSubtotal = Math.floor(parseFloat(debouncedBackendFilters.minSubtotal));
+      if (debouncedBackendFilters.maxSubtotal) params.toSubtotal = Math.floor(parseFloat(debouncedBackendFilters.maxSubtotal));
+      if (debouncedBackendFilters.dateFrom) params.fromTime = debouncedBackendFilters.dateFrom + ' 00:00:00';
+      if (debouncedBackendFilters.dateTo) params.toTime = debouncedBackendFilters.dateTo + ' 23:59:59';
+      if (debouncedBackendFilters.jurisdictions) params.jurisdictions = debouncedBackendFilters.jurisdictions;
+
+      const result = await getOrders(params);
+      setOrders(Array.isArray(result) ? result : (result.orders ?? []));
+      setTotalPages(result.totalPages ?? 1);
+      setTotalElements(result.totalElements ?? 0);
       setError(null);
     } catch (err) {
       setError(err.message);
       setOrders([]);
     } finally {
-      setLoading(false);
+      setRefreshing(false);
+      setInitialLoading(false);
     }
-  };
+  }, [currentPage, itemsPerPage, debouncedBackendFilters]);
 
-  // Filter logic
-  const filteredOrders = orders.filter(order => {
-    if (filters.minSubtotal && order.subtotal < parseFloat(filters.minSubtotal)) return false;
-    if (filters.maxSubtotal && order.subtotal > parseFloat(filters.maxSubtotal)) return false;
-    if (filters.minTax && order.tax_amount < parseFloat(filters.minTax)) return false;
-    if (filters.maxTax && order.tax_amount > parseFloat(filters.maxTax)) return false;
-    return true;
-  });
-
-  // Sort logic
-  const sortedOrders = [...filteredOrders].sort((a, b) => {
-    const multiplier = filters.sortOrder === 'asc' ? 1 : -1;
-    if (filters.sortBy === 'id') return (a.id - b.id) * multiplier;
-    if (filters.sortBy === 'subtotal') return (a.subtotal - b.subtotal) * multiplier;
-    if (filters.sortBy === 'tax') return (a.tax_amount - b.tax_amount) * multiplier;
-    if (filters.sortBy === 'total') return (a.total_amount - b.total_amount) * multiplier;
-    return 0;
-  });
-
-  // Pagination logic
-  const totalPages = Math.ceil(sortedOrders.length / itemsPerPage);
-  const indexOfLastItem = currentPage * itemsPerPage;
-  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentOrders = sortedOrders.slice(indexOfFirstItem, indexOfLastItem);
+  useEffect(() => {
+    loadOrders();
+  }, [loadOrders]);
 
   const handleFilterChange = (e) => {
     const { name, value } = e.target;
@@ -75,104 +92,141 @@ export default function OrderPage() {
     setFilters({
       minSubtotal: '',
       maxSubtotal: '',
-      minTax: '',
-      maxTax: '',
-      sortBy: 'id',
-      sortOrder: 'desc'
+      dateFrom: '',
+      dateTo: '',
+      jurisdictions: '',
     });
     setCurrentPage(1);
   };
 
-  if (loading) return <div className="order-page"><div className="loading">Завантаження замовлень...</div></div>;
-  if (error) return <div className="order-page"><div className="error">Помилка: {error}</div></div>;
+  // Підрахунок активних фільтрів
+  const activeFiltersCount = Object.values(filters).filter(v => v !== '').length;
+
+  // Тільки перше завантаження показує повний екран загрузки
+  if (initialLoading) return <div className="order-page"><div className="loading">Завантаження замовлень...</div></div>;
 
   return (
     <div className="order-page">
       <h1>Список замовлень</h1>
 
+      {error && <div className="error-inline">⚠️ Помилка: {error}</div>}
+
       {/* Filters */}
       <div className="filters-section">
-        <h3>Фільтри</h3>
-        <div className="filters-grid">
-          <div className="filter-group">
-            <label>Мін. Subtotal:</label>
-            <input
-              type="number"
-              name="minSubtotal"
-              step="0.01"
-              value={filters.minSubtotal}
-              onChange={handleFilterChange}
-              placeholder="0.00"
-            />
-          </div>
-          <div className="filter-group">
-            <label>Макс. Subtotal:</label>
-            <input
-              type="number"
-              name="maxSubtotal"
-              step="0.01"
-              value={filters.maxSubtotal}
-              onChange={handleFilterChange}
-              placeholder="9999.99"
-            />
-          </div>
-          <div className="filter-group">
-            <label>Мін. Податок:</label>
-            <input
-              type="number"
-              name="minTax"
-              step="0.01"
-              value={filters.minTax}
-              onChange={handleFilterChange}
-              placeholder="0.00"
-            />
-          </div>
-          <div className="filter-group">
-            <label>Макс. Податок:</label>
-            <input
-              type="number"
-              name="maxTax"
-              step="0.01"
-              value={filters.maxTax}
-              onChange={handleFilterChange}
-              placeholder="999.99"
-            />
-          </div>
-          <div className="filter-group">
-            <label>Сортувати за:</label>
-            <select name="sortBy" value={filters.sortBy} onChange={handleFilterChange}>
-              <option value="id">ID</option>
-              <option value="subtotal">Subtotal</option>
-              <option value="tax">Податок</option>
-              <option value="total">Загалом</option>
-            </select>
-          </div>
-          <div className="filter-group">
-            <label>Порядок:</label>
-            <select name="sortOrder" value={filters.sortOrder} onChange={handleFilterChange}>
-              <option value="desc">Спадання</option>
-              <option value="asc">Зростання</option>
-            </select>
+        <div className="filters-header">
+          <h3>
+            🔍 Фільтри
+            {activeFiltersCount > 0 && (
+              <span className="active-filters-badge">{activeFiltersCount}</span>
+            )}
+          </h3>
+          <div className="filters-actions">
+            {activeFiltersCount > 0 && (
+              <button onClick={resetFilters} className="reset-btn">
+                ✖ Скинути всі
+              </button>
+            )}
+            <button
+              onClick={() => setShowFilters(!showFilters)}
+              className="toggle-filters-btn"
+            >
+              {showFilters ? '▲ Згорнути' : '▼ Розгорнути'}
+            </button>
           </div>
         </div>
-        <button onClick={resetFilters} className="reset-btn">Скинути фільтри</button>
+
+        {showFilters && (
+          <div className="filters-content">
+            {/* Фільтри по Subtotal */}
+            <div className="filter-section">
+              <h4>💰 Subtotal</h4>
+              <div className="filters-grid">
+                <div className="filter-group">
+                  <label>Мін. Subtotal ($):</label>
+                  <input
+                    type="number"
+                    name="minSubtotal"
+                    step="1"
+                    value={filters.minSubtotal}
+                    onChange={handleFilterChange}
+                    placeholder="0"
+                  />
+                </div>
+                <div className="filter-group">
+                  <label>Макс. Subtotal ($):</label>
+                  <input
+                    type="number"
+                    name="maxSubtotal"
+                    step="1"
+                    value={filters.maxSubtotal}
+                    onChange={handleFilterChange}
+                    placeholder="9999"
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Фільтр по даті */}
+            <div className="filter-section">
+              <h4>📅 Період</h4>
+              <div className="filters-grid">
+                <div className="filter-group">
+                  <label>Дата від:</label>
+                  <input
+                    type="date"
+                    name="dateFrom"
+                    value={filters.dateFrom}
+                    onChange={handleFilterChange}
+                  />
+                </div>
+                <div className="filter-group">
+                  <label>Дата до:</label>
+                  <input
+                    type="date"
+                    name="dateTo"
+                    value={filters.dateTo}
+                    onChange={handleFilterChange}
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Фільтр по юрисдикції */}
+            <div className="filter-section">
+              <h4>🏛️ Юрисдикція</h4>
+              <div className="filter-group full-width">
+                <label>Юрисдикція (точний збіг):</label>
+                <input
+                  type="text"
+                  name="jurisdictions"
+                  value={filters.jurisdictions}
+                  onChange={handleFilterChange}
+                  placeholder="Наприклад: NEW YORK KINGS NEW YORK CITY"
+                />
+              </div>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Stats */}
       <div className="stats-bar">
-        <span>Показано: <strong>{currentOrders.length}</strong> з <strong>{sortedOrders.length}</strong></span>
-        <span>Всього замовлень: <strong>{orders.length}</strong></span>
+        <span>Показано: <strong>{orders.length}</strong> з <strong>{totalElements}</strong></span>
+        <span>Сторінка {currentPage} з {totalPages || 1}</span>
+        {refreshing && <span className="refreshing-indicator">⏳ Оновлення...</span>}
       </div>
 
       {/* Orders Table */}
-      <OrdersTable
-        orders={currentOrders}
-        loading={loading}
-        error={error}
-      />
+      <div className={`orders-table-container${refreshing ? ' refreshing' : ''}`}>
+        <OrdersTable
+          orders={orders}
+          loading={false}
+          error={null}
+        />
+      </div>
 
       {/* Pagination */}
-      {sortedOrders.length > 0 && totalPages > 1 && (
+      {totalPages > 1 && (
         <div className="pagination">
           <button
             onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
