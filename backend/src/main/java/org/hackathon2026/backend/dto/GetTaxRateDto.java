@@ -9,4 +9,9 @@ public class GetTaxRateDto {
     public List<BaseRates> getBaseRates() {
         return baseRates;
     }
+
+    public boolean isGood() {
+        return baseRates != null;
+    }
+
 }
