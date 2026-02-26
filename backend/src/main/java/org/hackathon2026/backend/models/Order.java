@@ -31,7 +31,7 @@ public class Order {
     public Order(
             float latitude, float longitude,
             int subtotal, String timestamp,
-            CountyInfo countyInfo
+            CountyInfo countyInfo, String cityName
     ) {
         this.latitude = latitude;
         this.longitude = longitude;
@@ -45,7 +45,7 @@ public class Order {
         this.cityRate = countyInfo.getCityTaxRate();
         this.specialRate = countyInfo.getSpecialTaxRate();
 
-        this.jurisdictions = "NY " + countyInfo.getName();
+        this.jurisdictions = "NY " + countyInfo.getName() + " " + cityName;
 
         calculateTax();
     }

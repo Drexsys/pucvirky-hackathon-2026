@@ -29,16 +29,20 @@ public class OrderController {
     @PostMapping
     public ResponseEntity<String> postOrder(@Valid @RequestBody OrderDto body) throws Exception {
         File geoJsonFile = new File(geoJsonFilePath);
-        GeoJsonRead geoJsonRead = new GeoJsonRead(geoJsonFile, "county");
-        var info = geoJsonRead.findCounty(body.getLongitude(), body.getLatitude());
+        GeoJsonRead geoJsonReadCounty = new GeoJsonRead(geoJsonFile, "county");
+        var infoC = geoJsonReadCounty.find(body.getLongitude(), body.getLatitude());
 
-        if (info == null) return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+        if (infoC == null) return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body("Location is outside of the covered area.");
 
-        CountyInfo countyInfo = CountyJsonRead.getCountyInfo(info.countyCode, countyFilePath);
+        File geoJsonFileCity = new File("jsons/cityInfo.json");
+        GeoJsonRead geoJsonReadCity = new GeoJsonRead(geoJsonFileCity, "NAME");
+        var cityName = geoJsonReadCity.find(body.getLongitude(), body.getLatitude());
+
+        CountyInfo countyInfo = CountyJsonRead.getCountyInfo(infoC.name(), countyFilePath);
 
         orderService.save(new Order(body.getLatitude(), body.getLongitude(),
-                body.getSubtotal(), body.getTimestamp(), countyInfo));
+                body.getSubtotal(), body.getTimestamp(), countyInfo, cityName.name()));
 
         return ResponseEntity.status(HttpStatus.CREATED).body("");
     }
