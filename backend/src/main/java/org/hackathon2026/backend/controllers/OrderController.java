@@ -4,12 +4,15 @@ import jakarta.validation.Valid;
 import org.hackathon2026.backend.dto.GetTaxRateDto;
 import org.hackathon2026.backend.dto.OrderDto;
 import org.hackathon2026.backend.external.ExternalApiService;
+import org.hackathon2026.backend.jsonTools.CountyJsonRead;
 import org.hackathon2026.backend.jsonTools.GeoJsonRead;
+import org.hackathon2026.backend.models.CountyInfo;
 import org.hackathon2026.backend.models.Order;
 import org.hackathon2026.backend.services.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.File;
@@ -24,18 +27,32 @@ public class OrderController {
     @Autowired
     private ExternalApiService externalApiService;
 
-    @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    public void postOrder(@Valid @RequestBody OrderDto body) throws Exception {
-        File geoJsonFile = new File("cugir-008180-geojson.json");
-        GeoJsonRead geoJsonRead = new GeoJsonRead(geoJsonFile, "county");
-        var info = geoJsonRead.findCounty(body.getLongitude(), body.getLatitude());
-        System.out.println((info != null) ? info.countyCode : "Not found");
+    private static final String geoJsonFilePath = "jsons/cugir-008180-geojson.json";
+    private static final String countyFilePath = "jsons/countyInfo.json";
 
+    @PostMapping("/new")
+    public void postOrderNew(@Valid @RequestBody OrderDto body) throws Exception {
         GetTaxRateDto response = externalApiService.getTaxRate(body.getLatitude(), body.getLongitude());
 
         orderService.save(new Order(body.getLatitude(), body.getLongitude(),
                 body.getSubtotal(), body.getTimestamp(), response.getBaseRates()));
+    }
+
+    @PostMapping
+    public ResponseEntity<String> postOrder(@Valid @RequestBody OrderDto body) throws Exception {
+        File geoJsonFile = new File(geoJsonFilePath);
+        GeoJsonRead geoJsonRead = new GeoJsonRead(geoJsonFile, "county");
+        var info = geoJsonRead.findCounty(body.getLongitude(), body.getLatitude());
+
+        if (info == null) return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body("Location is outside of the covered area.");
+
+        CountyInfo countyInfo = CountyJsonRead.getCountyInfo(info.countyCode, countyFilePath);
+
+        orderService.save(new Order(body.getLatitude(), body.getLongitude(),
+                body.getSubtotal(), body.getTimestamp(), countyInfo));
+
+        return ResponseEntity.status(HttpStatus.CREATED).body("");
     }
 
     @GetMapping

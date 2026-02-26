@@ -46,6 +46,34 @@ public class Order {
         calculateTax(baseRates);
     }
 
+    public Order(
+            float latitude, float longitude,
+            int subtotal, String timestamp,
+            CountyInfo countyInfo
+    ) {
+        this.latitude = latitude;
+        this.longitude = longitude;
+        this.subtotal = subtotal;
+
+        var timeT = timestamp.split(" ");
+        this.timestamp = Instant.parse(timeT[0] + "T" + timeT[1] + "Z");
+
+        this.stateRate = 0.04f;
+        this.countyRate = countyInfo.getCountyTaxRate();
+        this.cityRate = countyInfo.getCityTaxRate();
+        this.specialRate = countyInfo.getSpecialTaxRate();
+
+        this.jurisdictions = "NY " + countyInfo.getName();
+
+        calculateTax();
+    }
+
+    private void calculateTax() {
+        this.compositeTaxRate = this.stateRate + this.countyRate + this.cityRate + this.specialRate;
+        this.taxAmount = this.subtotal * this.compositeTaxRate;
+        this.totalAmount = this.subtotal + this.taxAmount;
+    }
+
     private void calculateTax(List<BaseRates> baseRates) {
         this.jurisdictions = "";
 
