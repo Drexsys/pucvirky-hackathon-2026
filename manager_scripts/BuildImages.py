@@ -7,9 +7,5 @@ def build():
     for image in images:
         click.secho('Building image: {}\n'.format(image[0]), fg='green')
 
-        if image[1] == './backend':
-            subprocess.run(['docker', 'build', '-t', image[0], image[1]],
-                                   stdout=subprocess.PIPE)
-
         subprocess.run(['docker', 'build', '-t', image[0], image[1]],
                        stdout=subprocess.PIPE)
