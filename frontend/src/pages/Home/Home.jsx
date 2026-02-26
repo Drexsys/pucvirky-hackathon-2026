@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import './Home.css';
 import { useAuth } from '../../contexts/AuthContext.jsx';
 
-function Home() {
+export default function Home() {
   const { isAuthenticated } = useAuth();
   const navigate = useNavigate();
 
@@ -52,4 +52,3 @@ function Home() {
   );
 }
 
-export default Home;

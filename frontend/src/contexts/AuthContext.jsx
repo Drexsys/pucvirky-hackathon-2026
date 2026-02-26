@@ -16,17 +16,6 @@ export function AuthProvider({ children }) {
       } catch {
         localStorage.removeItem('user');
       }
-    } else {
-      // TESTING: Auto-login with hardcoded credentials
-      const testUser = {
-        id: 1,
-        email: 'test@example.com',
-        name: 'Test User',
-        role: 'admin'
-      };
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      setUser(testUser);
-      localStorage.setItem('user', JSON.stringify(testUser));
     }
     setLoading(false);
   }, []);

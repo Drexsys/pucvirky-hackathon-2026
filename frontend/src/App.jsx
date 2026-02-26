@@ -5,6 +5,7 @@ import HomePage from './pages/Home/Home.jsx';
 import OrdersPage from './pages/OrderPage/OrderPage.jsx';
 import ImportPage from './pages/ImportPage/ImportPage.jsx';
 import CreateOrderPage from './pages/CreateOrderPage/CreateOrderPage.jsx';
+import CreateAdminPage from './pages/CreateAdminPage/CreateAdminPage.jsx';
 import LoginPage from './pages/LoginPage/LoginPage.jsx';
 import { useAuth } from './contexts/AuthContext.jsx';
 import './App.css';
@@ -45,6 +46,7 @@ export default function App() {
               <Route path="/orders"  element={<RequireAuth><OrdersPage /></RequireAuth>}      />
               <Route path="/import"  element={<RequireAuth><ImportPage /></RequireAuth>}      />
               <Route path="/create"  element={<RequireAuth><CreateOrderPage /></RequireAuth>} />
+              <Route path="/create-admin"  element={<RequireAuth><CreateAdminPage /></RequireAuth>} />
               <Route path="/login"   element={<LoginRedirect><LoginPage /></LoginRedirect>}   />
             </Routes>
           </main>

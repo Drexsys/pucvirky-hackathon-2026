@@ -1,15 +1,49 @@
-const API_BASE = "/api/auth";
+const API_BASE = "/api";
 
 export async function login(credentials) {
-    const res = await fetch(`${API_BASE}/login`, {
+    const { username, password } = credentials;
+    const res = await fetch(`${API_BASE}/users?username=${encodeURIComponent(username)}&password=${encodeURIComponent(password)}`, {
+        method: "GET",
+        headers: { "Content-Type": "application/json" }
+    });
+
+    if (!res.ok) {
+        const errorText = await res.text();
+        throw new Error(errorText || "Login failed");
+    }
+
+    // Backend returns empty string on success, so we create user object
+    return { username };
+}
+
+export async function register(credentials) {
+    const { username, password } = credentials;
+    const res = await fetch(`${API_BASE}/users?username=${encodeURIComponent(username)}&password=${encodeURIComponent(password)}`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(credentials)
+        headers: { "Content-Type": "application/json" }
+    });
+
+    if (!res.ok) {
+        const errorText = await res.text();
+        throw new Error(errorText || "Registration failed");
+    }
+
+    // Backend returns empty string on success, so we create user object
+    return { username };
+}
+
+export async function createNewAdmin(userData) {
+    const { username, password } = userData;
+    const res = await fetch(`${API_BASE}/users?username=${encodeURIComponent(username)}&password=${encodeURIComponent(password)}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" }
     });
     if (!res.ok) {
-        throw new Error("Login failed");
+        const errorText = await res.text();
+        throw new Error(errorText || "Failed to create admin");
     }
-    return res.json();
+    // Backend returns empty string on success, so we create user object
+    return { username };
 }
 
 
