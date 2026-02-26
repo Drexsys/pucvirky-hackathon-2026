@@ -1,9 +1,7 @@
 package org.hackathon2026.backend.controllers;
 
 import jakarta.validation.Valid;
-import org.hackathon2026.backend.dto.GetTaxRateDto;
 import org.hackathon2026.backend.dto.OrderDto;
-import org.hackathon2026.backend.external.ExternalApiService;
 import org.hackathon2026.backend.jsonTools.CountyJsonRead;
 import org.hackathon2026.backend.jsonTools.GeoJsonRead;
 import org.hackathon2026.backend.models.CountyInfo;
@@ -24,19 +22,9 @@ public class OrderController {
 
     @Autowired
     private OrderService orderService;
-    @Autowired
-    private ExternalApiService externalApiService;
 
     private static final String geoJsonFilePath = "jsons/cugir-008180-geojson.json";
     private static final String countyFilePath = "jsons/countyInfo.json";
-
-    @PostMapping("/new")
-    public void postOrderNew(@Valid @RequestBody OrderDto body) throws Exception {
-        GetTaxRateDto response = externalApiService.getTaxRate(body.getLatitude(), body.getLongitude());
-
-        orderService.save(new Order(body.getLatitude(), body.getLongitude(),
-                body.getSubtotal(), body.getTimestamp(), response.getBaseRates()));
-    }
 
     @PostMapping
     public ResponseEntity<String> postOrder(@Valid @RequestBody OrderDto body) throws Exception {

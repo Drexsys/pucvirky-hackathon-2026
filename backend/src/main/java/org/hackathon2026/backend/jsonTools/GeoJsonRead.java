@@ -15,9 +15,9 @@ import java.util.List;
 public class GeoJsonRead {
 
     public static class CountyRecord {
-        public final Geometry geometry;     // Polygon або MultiPolygon
-        public final String countyCode;     // або будь-який ваш атрибут
-        public final SimpleFeature feature; // якщо треба доступ до всіх properties
+        public final Geometry geometry;
+        public final String countyCode;
+        public final SimpleFeature feature;
 
         public CountyRecord(Geometry geometry, String countyCode, SimpleFeature feature) {
             this.geometry = geometry;
@@ -44,14 +44,12 @@ public class GeoJsonRead {
 
                     Geometry geom = (Geometry) geomObj;
 
-                    // Назва county з properties
                     Object nameObj = feature.getAttribute(countyNameProperty);
                     String countyName = nameObj != null ? nameObj.toString() : "UNKNOWN";
 
                     CountyRecord rec = new CountyRecord(geom, countyName, feature);
                     all.add(rec);
 
-                    // Додаємо в індекс за bbox
                     index.insert(geom.getEnvelopeInternal(), rec);
                 }
             }
@@ -59,25 +57,16 @@ public class GeoJsonRead {
         index.build();
     }
 
-    /** Повертає county для точки (lon, lat). */
     public CountyRecord findCounty(double lon, double lat) {
         Point p = geometryFactory.createPoint(new Coordinate(lon, lat));
 
-        // Спершу кандидати з індексу по bbox
-        @SuppressWarnings("unchecked")
         List<CountyRecord> candidates = index.query(p.getEnvelopeInternal());
 
         for (CountyRecord rec : candidates) {
-            // covers краще за contains для точок на межі
-            if (rec.geometry != null && rec.geometry.covers(p)) {
+            if (rec.geometry != null && rec.geometry.covers(p))
                 return rec;
-            }
         }
         return null;
-    }
-
-    public int countyCount() {
-        return all.size();
     }
 
 }
