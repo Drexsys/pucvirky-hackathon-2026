@@ -31,7 +31,11 @@ public class Order {
 
     public Order() {}
 
-    public Order(float latitude, float longitude, int subtotal, String timestamp, List<BaseRates> baseRates) {
+    public Order(
+            float latitude, float longitude,
+            int subtotal, String timestamp,
+            List<BaseRates> baseRates
+    ) {
         this.latitude = latitude;
         this.longitude = longitude;
         this.subtotal = subtotal;
