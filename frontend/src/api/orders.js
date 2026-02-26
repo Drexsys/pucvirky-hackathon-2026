@@ -96,7 +96,7 @@ export async function createOrder(payload) {
         });
     } catch (networkError) {
         console.error('Network error creating order:', networkError);
-        throw new Error('Could not connect to backend. Make sure the backend is running on port 8000.');
+        throw new Error('Could not connect to backend.');
     }
 
     if (!res.ok) {

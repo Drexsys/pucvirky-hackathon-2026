@@ -43,6 +43,12 @@ export default function Header() {
         closeMobile();
     };
 
+    const handleCreateNewAdmin = () => {
+        navigate('/create-admin');
+        closeAccount();
+        closeMobile();
+    }
+
     const handleAccountClick = (path) => {
         navigate(path);
         closeAccount();
@@ -97,7 +103,7 @@ export default function Header() {
                         >
                             <span className="header__account-icon">👤</span>
                             <span className="header__account-label">
-                                {isAuthenticated && user ? (user.name || user.email) : 'Account'}
+                                {isAuthenticated && user ? (user.username || user.name || user.email || 'Account') : 'Account'}
                             </span>
                             <span className={`header__account-arrow ${accountOpen ? 'header__account-arrow--open' : ''}`}>▼</span>
                         </button>
@@ -113,7 +119,12 @@ export default function Header() {
                                 ) : (
                                     <>
                                         <div className="header__account-user">
-                                            <strong>{user?.name || user?.email}</strong>
+                                            <strong>{user?.username || user?.name || user?.email || 'User'}</strong>
+                                        </div>
+                                        <div className="header__account-createNewAdmin">
+                                            <button onClick ={handleCreateNewAdmin} className="header__account-item header__account-item-createNewAdmin">
+                                                <span>➕</span> Create New Admin
+                                            </button>
                                         </div>
                                         <div className="header__account-divider" />
                                         <button onClick={handleLogout} className="header__account-item header__account-item--logout">
@@ -163,7 +174,7 @@ export default function Header() {
 
                     <div className="header__mobile-user">
                         <span>👤</span>
-                        <strong>{user?.name || user?.email}</strong>
+                        <strong>{user?.username || user?.name || user?.email || 'User'}</strong>
                     </div>
                     <button onClick={handleLogout} className="header__mobile-link header__mobile-logout">
                         <span>🚪</span> Log Out
