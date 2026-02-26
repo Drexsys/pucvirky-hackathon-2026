@@ -1,18 +1,19 @@
 package org.hackathon2026.backend.controllers;
 
-import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.validation.Valid;
-import org.apache.coyote.BadRequestException;
-import org.hackathon2026.backend.dto.GetTaxRateDto;
 import org.hackathon2026.backend.dto.OrderDto;
-import org.hackathon2026.backend.external.ExternalApiService;
+import org.hackathon2026.backend.jsonTools.CountyJsonRead;
+import org.hackathon2026.backend.jsonTools.GeoJsonRead;
+import org.hackathon2026.backend.models.CountyInfo;
 import org.hackathon2026.backend.models.Order;
 import org.hackathon2026.backend.services.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.File;
 import java.time.Instant;
 
 @RestController
@@ -21,16 +22,29 @@ public class OrderController {
 
     @Autowired
     private OrderService orderService;
-    @Autowired
-    private ExternalApiService externalApiService;
+
+    private static final String geoJsonFilePath = "jsons/cugir-008180-geojson.json";
+    private static final String countyFilePath = "jsons/countyInfo.json";
 
     @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    public void postOrder(@Valid @RequestBody OrderDto body) throws BadRequestException {
-        GetTaxRateDto response = externalApiService.getTaxRate(body.getLatitude(), body.getLongitude());
+    public ResponseEntity<String> postOrder(@Valid @RequestBody OrderDto body) throws Exception {
+        File geoJsonFile = new File(geoJsonFilePath);
+        GeoJsonRead geoJsonReadCounty = new GeoJsonRead(geoJsonFile, "county");
+        var infoC = geoJsonReadCounty.find(body.getLongitude(), body.getLatitude());
+
+        if (infoC == null) return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body("Location is outside of the covered area.");
+
+        File geoJsonFileCity = new File("jsons/cityInfo.json");
+        GeoJsonRead geoJsonReadCity = new GeoJsonRead(geoJsonFileCity, "NAME");
+        var cityName = geoJsonReadCity.find(body.getLongitude(), body.getLatitude());
+
+        CountyInfo countyInfo = CountyJsonRead.getCountyInfo(infoC.name(), countyFilePath);
 
         orderService.save(new Order(body.getLatitude(), body.getLongitude(),
-                body.getSubtotal(), body.getTimestamp(), response.getBaseRates()));
+                body.getSubtotal(), body.getTimestamp(), countyInfo, cityName.name()));
+
+        return ResponseEntity.status(HttpStatus.CREATED).body("");
     }
 
     @GetMapping

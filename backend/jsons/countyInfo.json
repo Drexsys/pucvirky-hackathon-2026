@@ -1,0 +1,374 @@
+{
+  "001": {
+    "name": "Albany",
+    "countyTaxRate": 0.04,
+    "cityTaxRate": 0,
+    "specialTaxRate": 0
+  },
+  "003": {
+    "name": "Allegany",
+    "countyTaxRate": 0.045,
+    "cityTaxRate": 0,
+    "specialTaxRate": 0
+  },
+  "005": {
+    "name": "Bronx",
+    "countyTaxRate": 0,
+    "cityTaxRate": 0.045,
+    "specialTaxRate": 0.0038
+  },
+  "007": {
+    "name": "Broome",
+    "countyTaxRate": 0.04,
+    "cityTaxRate": 0,
+    "specialTaxRate": 0
+  },
+  "009": {
+    "name": "Cattaraugus",
+    "countyTaxRate": 0.04,
+    "cityTaxRate": 0,
+    "specialTaxRate": 0
+  },
+  "011": {
+    "name": "Cayuga",
+    "countyTaxRate": 0.04,
+    "cityTaxRate": 0,
+    "specialTaxRate": 0
+  },
+  "013": {
+    "name": "Chautauqua",
+    "countyTaxRate": 0.04,
+    "cityTaxRate": 0,
+    "specialTaxRate": 0
+  },
+  "015": {
+    "name": "Chemung",
+    "countyTaxRate": 0.04,
+    "cityTaxRate": 0,
+    "specialTaxRate": 0
+  },
+  "017": {
+    "name": "Chenango",
+    "countyTaxRate": 0.04,
+    "cityTaxRate": 0,
+    "specialTaxRate": 0
+  },
+  "019": {
+    "name": "Clinton",
+    "countyTaxRate": 0.04,
+    "cityTaxRate": 0,
+    "specialTaxRate": 0
+  },
+  "021": {
+    "name": "Columbia",
+    "countyTaxRate": 0.04,
+    "cityTaxRate": 0,
+    "specialTaxRate": 0
+  },
+  "023": {
+    "name": "Cortland",
+    "countyTaxRate": 0.04,
+    "cityTaxRate": 0,
+    "specialTaxRate": 0
+  },
+  "025": {
+    "name": "Delaware",
+    "countyTaxRate": 0.04,
+    "cityTaxRate": 0,
+    "specialTaxRate": 0
+  },
+  "027": {
+    "name": "Dutchess",
+    "countyTaxRate": 0.0375,
+    "cityTaxRate": 0,
+    "specialTaxRate": 0
+  },
+  "029": {
+    "name": "Erie",
+    "countyTaxRate": 0.0475,
+    "cityTaxRate": 0,
+    "specialTaxRate": 0
+  },
+  "031": {
+    "name": "Essex",
+    "countyTaxRate": 0.04,
+    "cityTaxRate": 0,
+    "specialTaxRate": 0
+  },
+  "033": {
+    "name": "Franklin",
+    "countyTaxRate": 0.04,
+    "cityTaxRate": 0,
+    "specialTaxRate": 0
+  },
+  "035": {
+    "name": "Fulton",
+    "countyTaxRate": 0.04,
+    "cityTaxRate": 0,
+    "specialTaxRate": 0
+  },
+  "037": {
+    "name": "Genesee",
+    "countyTaxRate": 0.04,
+    "cityTaxRate": 0,
+    "specialTaxRate": 0
+  },
+  "039": {
+    "name": "Greene",
+    "countyTaxRate": 0.04,
+    "cityTaxRate": 0,
+    "specialTaxRate": 0
+  },
+  "041": {
+    "name": "Hamilton",
+    "countyTaxRate": 0.04,
+    "cityTaxRate": 0,
+    "specialTaxRate": 0
+  },
+  "043": {
+    "name": "Herkimer",
+    "countyTaxRate": 0.0425,
+    "cityTaxRate": 0,
+    "specialTaxRate": 0
+  },
+  "045": {
+    "name": "Jefferson",
+    "countyTaxRate": 0.04,
+    "cityTaxRate": 0,
+    "specialTaxRate": 0
+  },
+  "047": {
+    "name": "Kings",
+    "countyTaxRate": 0,
+    "cityTaxRate": 0.045,
+    "specialTaxRate": 0.00375
+  },
+  "049": {
+    "name": "Lewis",
+    "countyTaxRate": 0.04,
+    "cityTaxRate": 0,
+    "specialTaxRate": 0
+  },
+  "051": {
+    "name": "Livingston",
+    "countyTaxRate": 0.04,
+    "cityTaxRate": 0,
+    "specialTaxRate": 0
+  },
+  "053": {
+    "name": "Madison",
+    "countyTaxRate": 0.04,
+    "cityTaxRate": 0,
+    "specialTaxRate": 0
+  },
+  "055": {
+    "name": "Monroe",
+    "countyTaxRate": 0.04,
+    "cityTaxRate": 0,
+    "specialTaxRate": 0
+  },
+  "057": {
+    "name": "Montgomery",
+    "countyTaxRate": 0.04,
+    "cityTaxRate": 0,
+    "specialTaxRate": 0
+  },
+  "059": {
+    "name": "Nassau",
+    "countyTaxRate": 0.0425,
+    "cityTaxRate": 0,
+    "specialTaxRate": 0
+  },
+  "061": {
+    "name": "New York",
+    "countyTaxRate": 0,
+    "cityTaxRate": 0.045,
+    "specialTaxRate": 0.00375
+  },
+  "063": {
+    "name": "Niagara",
+    "countyTaxRate": 0.04,
+    "cityTaxRate": 0,
+    "specialTaxRate": 0
+  },
+  "065": {
+    "name": "Oneida",
+    "countyTaxRate": 0.0475,
+    "cityTaxRate": 0,
+    "specialTaxRate": 0
+  },
+  "067": {
+    "name": "Onondaga",
+    "countyTaxRate": 0.04,
+    "cityTaxRate": 0,
+    "specialTaxRate": 0
+  },
+  "069": {
+    "name": "Ontario",
+    "countyTaxRate": 0.035,
+    "cityTaxRate": 0,
+    "specialTaxRate": 0
+  },
+  "071": {
+    "name": "Orange",
+    "countyTaxRate": 0.0375,
+    "cityTaxRate": 0,
+    "specialTaxRate": 0
+  },
+  "073": {
+    "name": "Orleans",
+    "countyTaxRate": 0.04,
+    "cityTaxRate": 0,
+    "specialTaxRate": 0
+  },
+  "075": {
+    "name": "Oswego",
+    "countyTaxRate": 0.04,
+    "cityTaxRate": 0,
+    "specialTaxRate": 0
+  },
+  "077": {
+    "name": "Otsego",
+    "countyTaxRate": 0.04,
+    "cityTaxRate": 0,
+    "specialTaxRate": 0
+  },
+  "079": {
+    "name": "Putnam",
+    "countyTaxRate": 0.04,
+    "cityTaxRate": 0,
+    "specialTaxRate": 0
+  },
+  "081": {
+    "name": "Queens",
+    "countyTaxRate": 0,
+    "cityTaxRate": 0.045,
+    "specialTaxRate": 0.00375
+  },
+  "083": {
+    "name": "Rensselaer",
+    "countyTaxRate": 0.04,
+    "cityTaxRate": 0,
+    "specialTaxRate": 0
+  },
+  "085": {
+    "name": "Richmond",
+    "countyTaxRate": 0,
+    "cityTaxRate": 0.045,
+    "specialTaxRate": 0.00375
+  },
+  "087": {
+    "name": "Rockland",
+    "countyTaxRate": 0.04,
+    "cityTaxRate": 0,
+    "specialTaxRate": 0
+  },
+  "089": {
+    "name": "St. Lawrence",
+    "countyTaxRate": 0.04,
+    "cityTaxRate": 0,
+    "specialTaxRate": 0
+  },
+  "091": {
+    "name": "Saratoga",
+    "countyTaxRate": 0.03,
+    "cityTaxRate": 0,
+    "specialTaxRate": 0
+  },
+  "093": {
+    "name": "Schenectady",
+    "countyTaxRate": 0.04,
+    "cityTaxRate": 0,
+    "specialTaxRate": 0
+  },
+  "095": {
+    "name": "Schoharie",
+    "countyTaxRate": 0.04,
+    "cityTaxRate": 0,
+    "specialTaxRate": 0
+  },
+  "097": {
+    "name": "Schuyler",
+    "countyTaxRate": 0.04,
+    "cityTaxRate": 0,
+    "specialTaxRate": 0
+  },
+  "099": {
+    "name": "Seneca",
+    "countyTaxRate": 0.04,
+    "cityTaxRate": 0,
+    "specialTaxRate": 0
+  },
+  "101": {
+    "name": "Steuben",
+    "countyTaxRate": 0.04,
+    "cityTaxRate": 0,
+    "specialTaxRate": 0
+  },
+  "103": {
+    "name": "Suffolk",
+    "countyTaxRate": 0.0425,
+    "cityTaxRate": 0,
+    "specialTaxRate": 0
+  },
+  "105": {
+    "name": "Sullivan",
+    "countyTaxRate": 0.04,
+    "cityTaxRate": 0,
+    "specialTaxRate": 0
+  },
+  "107": {
+    "name": "Tioga",
+    "countyTaxRate": 0.04,
+    "cityTaxRate": 0,
+    "specialTaxRate": 0
+  },
+  "109": {
+    "name": "Tompkins",
+    "countyTaxRate": 0.04,
+    "cityTaxRate": 0,
+    "specialTaxRate": 0
+  },
+  "111": {
+    "name": "Ulster",
+    "countyTaxRate": 0.04,
+    "cityTaxRate": 0,
+    "specialTaxRate": 0
+  },
+  "113": {
+    "name": "Warren",
+    "countyTaxRate": 0.03,
+    "cityTaxRate": 0,
+    "specialTaxRate": 0
+  },
+  "115": {
+    "name": "Washington",
+    "countyTaxRate": 0.03,
+    "cityTaxRate": 0,
+    "specialTaxRate": 0
+  },
+  "117": {
+    "name": "Wayne",
+    "countyTaxRate": 0.04,
+    "cityTaxRate": 0,
+    "specialTaxRate": 0
+  },
+  "119": {
+    "name": "Westchester",
+    "countyTaxRate": 0.04,
+    "cityTaxRate": 0,
+    "specialTaxRate": 0
+  },
+  "121": {
+    "name": "Wyoming",
+    "countyTaxRate": 0.04,
+    "cityTaxRate": 0,
+    "specialTaxRate": 0
+  },
+  "123": {
+    "name": "Yates",
+    "countyTaxRate": 0.04,
+    "cityTaxRate": 0,
+    "specialTaxRate": 0
+  }
+}

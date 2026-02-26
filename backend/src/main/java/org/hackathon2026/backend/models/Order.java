@@ -1,10 +1,7 @@
 package org.hackathon2026.backend.models;
 
 import jakarta.persistence.*;
-import org.hackathon2026.backend.dto.BaseRates;
-
 import java.time.Instant;
-import java.util.List;
 
 @Entity
 @Table(name = "orders")
@@ -31,7 +28,11 @@ public class Order {
 
     public Order() {}
 
-    public Order(float latitude, float longitude, int subtotal, String timestamp, List<BaseRates> baseRates) {
+    public Order(
+            float latitude, float longitude,
+            int subtotal, String timestamp,
+            CountyInfo countyInfo, String cityName
+    ) {
         this.latitude = latitude;
         this.longitude = longitude;
         this.subtotal = subtotal;
@@ -39,32 +40,18 @@ public class Order {
         var timeT = timestamp.split(" ");
         this.timestamp = Instant.parse(timeT[0] + "T" + timeT[1] + "Z");
 
-        calculateTax(baseRates);
+        this.stateRate = 0.04f;
+        this.countyRate = countyInfo.getCountyTaxRate();
+        this.cityRate = countyInfo.getCityTaxRate();
+        this.specialRate = countyInfo.getSpecialTaxRate();
+
+        this.jurisdictions = "NY " + countyInfo.getName() + " " + cityName;
+
+        calculateTax();
     }
 
-    private void calculateTax(List<BaseRates> baseRates) {
-        this.jurisdictions = "";
-
-        for (int i = 0; i < baseRates.size(); i += 2) {
-            this.compositeTaxRate += baseRates.get(i).getRate();
-
-            switch (i) {
-                case 0:
-                    this.stateRate = baseRates.get(i).getRate();break;
-                case 2:
-                    this.countyRate = baseRates.get(i).getRate();break;
-                case 4:
-                    this.cityRate = baseRates.get(i).getRate();break;
-                case 6:
-                    this.specialRate = baseRates.get(i).getRate();break;
-            }
-
-            if (i < 8)
-                this.jurisdictions = new StringBuilder().append(this.jurisdictions)
-                        .append(baseRates.get(i).getJurName())
-                        .append((i != 4) ? " " : "").toString();
-        }
-
+    private void calculateTax() {
+        this.compositeTaxRate = this.stateRate + this.countyRate + this.cityRate + this.specialRate;
         this.taxAmount = this.subtotal * this.compositeTaxRate;
         this.totalAmount = this.subtotal + this.taxAmount;
     }
