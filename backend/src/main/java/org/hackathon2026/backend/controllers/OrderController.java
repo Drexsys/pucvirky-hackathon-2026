@@ -7,6 +7,7 @@ import org.hackathon2026.backend.jsonTools.GeoJsonRead;
 import org.hackathon2026.backend.models.CountyInfo;
 import org.hackathon2026.backend.models.Order;
 import org.hackathon2026.backend.services.OrderService;
+import org.hackathon2026.backend.threads.GeoJsonParse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
@@ -28,16 +29,18 @@ public class OrderController {
 
     @PostMapping
     public ResponseEntity<String> postOrder(@Valid @RequestBody OrderDto body) throws Exception {
-        File geoJsonFile = new File(geoJsonFilePath);
-        GeoJsonRead geoJsonReadCounty = new GeoJsonRead(geoJsonFile, "county");
-        var infoC = geoJsonReadCounty.find(body.getLongitude(), body.getLatitude());
-
-        if (infoC == null) return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body("Location is outside of the covered area.");
+        GeoJsonParse thread = new GeoJsonParse(
+                geoJsonFilePath,
+                body.getLongitude(), body.getLatitude(),
+                "county");
+        thread.start();
 
         File geoJsonFileCity = new File("jsons/cityInfo.json");
         GeoJsonRead geoJsonReadCity = new GeoJsonRead(geoJsonFileCity, "NAME");
         var cityName = geoJsonReadCity.find(body.getLongitude(), body.getLatitude());
+
+        thread.join();
+        GeoJsonRead.InfoRecord infoC = thread.getInfo();
 
         CountyInfo countyInfo = CountyJsonRead.getCountyInfo(infoC.name(), countyFilePath);
 
