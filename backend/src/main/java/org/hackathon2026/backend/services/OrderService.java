@@ -33,5 +33,8 @@ public class OrderService {
     public void save(Order order) {
         orderRepository.save(order);
     }
+    public Long count() {
+        return orderRepository.count();
+    }
 }
 

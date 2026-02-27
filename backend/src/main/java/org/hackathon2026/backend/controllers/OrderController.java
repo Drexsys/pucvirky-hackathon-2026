@@ -96,7 +96,7 @@ public class OrderController {
     }
 
     @PostMapping("/import")
-    public boolean importOrders(@RequestParam("file") MultipartFile file) throws Exception {
+    public Long importOrders(@RequestParam("file") MultipartFile file) throws Exception {
         List<OrderDto> ordersInfo = new CsvToBeanBuilder<OrderDto>(
                 new java.io.InputStreamReader(file.getInputStream(), java.nio.charset.StandardCharsets.UTF_8)
         )
@@ -110,21 +110,28 @@ public class OrderController {
         File geoJsonFileCity = new File("jsons/cityInfo.json");
         GeoJsonRead geoJsonReadCity = new GeoJsonRead(geoJsonFileCity, "NAME");
 
-        System.out.println("Starting tax calculation for " + ordersInfo.size() + " orders...");
+        int threadsCount = Runtime.getRuntime().availableProcessors();
+        int ordersPerThread = ordersInfo.size() / threadsCount;
+        CalculateTax[] threads = new CalculateTax[threadsCount];
+        for (int i = 0; i < threadsCount; i++) {
+            int start = i * ordersPerThread;
+            int end = (i == threadsCount - 1) ? (ordersInfo.size() - 1) : (start + ordersPerThread);
 
-        CalculateTax calculateTax = new CalculateTax(
-                ordersInfo,
-                0, ordersInfo.size() - 1,
-                geoJsonReadCounty, geoJsonReadCity,
-                orderService
-        );
-        calculateTax.start();
+            var calculateTax = new CalculateTax(
+                    ordersInfo,
+                    start, end,
+                    geoJsonReadCounty, geoJsonReadCity,
+                    orderService
+            );
+            calculateTax.start();
 
-        calculateTax.join();
+            threads[i] = calculateTax;
+        }
 
-        System.out.println("Stop");
+        for (CalculateTax thread : threads)
+            thread.join();
 
-        return true;
+        return orderService.count();
     }
 
     public static String getCountyFilePath() {

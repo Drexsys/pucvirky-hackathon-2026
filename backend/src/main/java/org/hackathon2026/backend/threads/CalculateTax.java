@@ -52,9 +52,6 @@ public class CalculateTax extends Thread {
                         countyInfo,
                         (cityName != null) ? cityName.name() : ""
                 ));
-
-                System.out.println(i);
-
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
