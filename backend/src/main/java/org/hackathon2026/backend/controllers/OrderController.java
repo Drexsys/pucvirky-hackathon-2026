@@ -34,9 +34,7 @@ public class OrderController {
     @PostMapping
     public ResponseEntity<String> postOrder(@Valid @RequestBody OrderDto body) throws Exception {
         GeoJsonParse thread = new GeoJsonParse(
-                geoJsonFilePath,
-                body.getLongitude(), body.getLatitude(),
-                "county");
+                geoJsonFilePath, "county");
         thread.start();
 
         File geoJsonFileCity = new File("jsons/cityInfo.json");
@@ -44,12 +42,12 @@ public class OrderController {
         var cityName = geoJsonReadCity.find(body.getLongitude(), body.getLatitude());
 
         thread.join();
-        GeoJsonRead.InfoRecord infoC = thread.getInfo();
+        GeoJsonRead geoJsonRead = thread.getGeoJsonRead();
 
-        CountyInfo countyInfo = CountyJsonRead.getCountyInfo(infoC.name(), countyFilePath);
+//        CountyInfo countyInfo = CountyJsonRead.getCountyInfo(infoC.name(), countyFilePath);
 
-        orderService.save(new Order(body.getLatitude(), body.getLongitude(),
-                (int) body.getSubtotal(), body.getTimestamp(), countyInfo, cityName.name()));
+//        orderService.save(new Order(body.getLatitude(), body.getLongitude(),
+//                (int) body.getSubtotal(), body.getTimestamp(), countyInfo, cityName.name()));
 
         return ResponseEntity.status(HttpStatus.CREATED).body("");
     }
@@ -97,22 +95,33 @@ public class OrderController {
 
     @PostMapping("/import")
     public Long importOrders(@RequestParam("file") MultipartFile file) throws Exception {
+        String[][] pathParts = {
+                {geoJsonFilePath, "county"},
+                {"jsons/cityInfo.json", "NAME"}
+        };
+
+        GeoJsonParse[] threadsParse = new GeoJsonParse[2];
+        for (byte i = 0; i < 2; i++) {
+            GeoJsonParse thread = new GeoJsonParse(
+                    pathParts[i][0], pathParts[i][1]);
+            thread.start();
+            threadsParse[i] = thread;
+        }
+
         List<OrderDto> ordersInfo = new CsvToBeanBuilder<OrderDto>(
-                new java.io.InputStreamReader(file.getInputStream(), java.nio.charset.StandardCharsets.UTF_8)
-        )
+                new java.io.InputStreamReader(file.getInputStream(),
+                        java.nio.charset.StandardCharsets.UTF_8))
                 .withType(OrderDto.class)
                 .withIgnoreLeadingWhiteSpace(true)
                 .build()
                 .parse();
 
-        File geoJsonFileCounty = new File(geoJsonFilePath);
-        GeoJsonRead geoJsonReadCounty = new GeoJsonRead(geoJsonFileCounty, "county");
-        File geoJsonFileCity = new File("jsons/cityInfo.json");
-        GeoJsonRead geoJsonReadCity = new GeoJsonRead(geoJsonFileCity, "NAME");
+        for (GeoJsonParse thread : threadsParse)
+            thread.join();
 
         int threadsCount = Runtime.getRuntime().availableProcessors();
         int ordersPerThread = ordersInfo.size() / threadsCount;
-        CalculateTax[] threads = new CalculateTax[threadsCount];
+        CalculateTax[] threadsTax = new CalculateTax[threadsCount];
         for (int i = 0; i < threadsCount; i++) {
             int start = i * ordersPerThread;
             int end = (i == threadsCount - 1) ? (ordersInfo.size() - 1) : (start + ordersPerThread);
@@ -120,15 +129,16 @@ public class OrderController {
             var calculateTax = new CalculateTax(
                     ordersInfo,
                     start, end,
-                    geoJsonReadCounty, geoJsonReadCity,
+                    threadsParse[0].getGeoJsonRead(),
+                    threadsParse[1].getGeoJsonRead(),
                     orderService
             );
             calculateTax.start();
 
-            threads[i] = calculateTax;
+            threadsTax[i] = calculateTax;
         }
 
-        for (CalculateTax thread : threads)
+        for (CalculateTax thread : threadsTax)
             thread.join();
 
         return orderService.count();

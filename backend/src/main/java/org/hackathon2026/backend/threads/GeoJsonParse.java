@@ -7,35 +7,30 @@ import java.io.File;
 public class GeoJsonParse extends Thread {
 
     private final String geoJsonFilePath, propertyName;
-    private final float longitude, latitude;
 
-    private GeoJsonRead.InfoRecord info;
+    private GeoJsonRead geoJsonRead;
 
     public GeoJsonParse(
             String geoJsonFilePath,
-            float longitude, float latitude,
             String propertyName
     ) {
         this.geoJsonFilePath = geoJsonFilePath;
-        this.longitude = longitude;
-        this.latitude = latitude;
         this.propertyName = propertyName;
+        this.geoJsonRead = null;
     }
 
     @Override
     public void run() {
         File geoJsonFile = new File(geoJsonFilePath);
-        GeoJsonRead geoJsonRead;
         try {
             geoJsonRead = new GeoJsonRead(geoJsonFile, propertyName);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-        info = geoJsonRead.find(longitude, latitude);
     }
 
-    public GeoJsonRead.InfoRecord getInfo() {
-        return info;
+    public GeoJsonRead getGeoJsonRead() {
+        return geoJsonRead;
     }
 
 }
