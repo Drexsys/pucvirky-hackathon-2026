@@ -29,6 +29,7 @@ public class OrderController {
     private OrderService orderService;
 
     private static final String geoJsonFilePath = "jsons/cugir-008180-geojson.json";
+    private static final String geoJsonCityPath = "jsons/cityInfo.json";
     private static final String countyFilePath = "jsons/countyInfo.json";
 
     @PostMapping
@@ -37,17 +38,18 @@ public class OrderController {
                 geoJsonFilePath, "county");
         thread.start();
 
-        File geoJsonFileCity = new File("jsons/cityInfo.json");
+        File geoJsonFileCity = new File(geoJsonCityPath);
         GeoJsonRead geoJsonReadCity = new GeoJsonRead(geoJsonFileCity, "NAME");
         var cityName = geoJsonReadCity.find(body.getLongitude(), body.getLatitude());
 
         thread.join();
         GeoJsonRead geoJsonRead = thread.getGeoJsonRead();
+        var infoC = geoJsonRead.find(body.getLongitude(), body.getLatitude());
 
-//        CountyInfo countyInfo = CountyJsonRead.getCountyInfo(infoC.name(), countyFilePath);
+        CountyInfo countyInfo = CountyJsonRead.getCountyInfo(infoC.name(), countyFilePath);
 
-//        orderService.save(new Order(body.getLatitude(), body.getLongitude(),
-//                (int) body.getSubtotal(), body.getTimestamp(), countyInfo, cityName.name()));
+        orderService.save(new Order(body.getLatitude(), body.getLongitude(),
+                (int) body.getSubtotal(), body.getTimestamp(), countyInfo, cityName.name()));
 
         return ResponseEntity.status(HttpStatus.CREATED).body("");
     }
@@ -97,7 +99,7 @@ public class OrderController {
     public Long importOrders(@RequestParam("file") MultipartFile file) throws Exception {
         String[][] pathParts = {
                 {geoJsonFilePath, "county"},
-                {"jsons/cityInfo.json", "NAME"}
+                {geoJsonCityPath, "NAME"}
         };
 
         GeoJsonParse[] threadsParse = new GeoJsonParse[2];
