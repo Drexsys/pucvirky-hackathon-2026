@@ -1,5 +1,6 @@
 package org.hackathon2026.backend.controllers;
 
+import com.opencsv.bean.CsvToBeanBuilder;
 import jakarta.validation.Valid;
 import org.hackathon2026.backend.dto.OrderDto;
 import org.hackathon2026.backend.jsonTools.CountyJsonRead;
@@ -7,15 +8,18 @@ import org.hackathon2026.backend.jsonTools.GeoJsonRead;
 import org.hackathon2026.backend.models.CountyInfo;
 import org.hackathon2026.backend.models.Order;
 import org.hackathon2026.backend.services.OrderService;
+import org.hackathon2026.backend.threads.CalculateTax;
 import org.hackathon2026.backend.threads.GeoJsonParse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.time.Instant;
+import java.util.List;
 
 @RestController
 @RequestMapping("/orders")
@@ -45,7 +49,7 @@ public class OrderController {
         CountyInfo countyInfo = CountyJsonRead.getCountyInfo(infoC.name(), countyFilePath);
 
         orderService.save(new Order(body.getLatitude(), body.getLongitude(),
-                body.getSubtotal(), body.getTimestamp(), countyInfo, cityName.name()));
+                (int) body.getSubtotal(), body.getTimestamp(), countyInfo, cityName.name()));
 
         return ResponseEntity.status(HttpStatus.CREATED).body("");
     }
@@ -89,6 +93,42 @@ public class OrderController {
                 fromTimeI, toTimeI,
                 jurisdictions
         );
+    }
+
+    @PostMapping("/import")
+    public boolean importOrders(@RequestParam("file") MultipartFile file) throws Exception {
+        List<OrderDto> ordersInfo = new CsvToBeanBuilder<OrderDto>(
+                new java.io.InputStreamReader(file.getInputStream(), java.nio.charset.StandardCharsets.UTF_8)
+        )
+                .withType(OrderDto.class)
+                .withIgnoreLeadingWhiteSpace(true)
+                .build()
+                .parse();
+
+        File geoJsonFileCounty = new File(geoJsonFilePath);
+        GeoJsonRead geoJsonReadCounty = new GeoJsonRead(geoJsonFileCounty, "county");
+        File geoJsonFileCity = new File("jsons/cityInfo.json");
+        GeoJsonRead geoJsonReadCity = new GeoJsonRead(geoJsonFileCity, "NAME");
+
+        System.out.println("Starting tax calculation for " + ordersInfo.size() + " orders...");
+
+        CalculateTax calculateTax = new CalculateTax(
+                ordersInfo,
+                0, ordersInfo.size() - 1,
+                geoJsonReadCounty, geoJsonReadCity,
+                orderService
+        );
+        calculateTax.start();
+
+        calculateTax.join();
+
+        System.out.println("Stop");
+
+        return true;
+    }
+
+    public static String getCountyFilePath() {
+        return countyFilePath;
     }
 
 }
