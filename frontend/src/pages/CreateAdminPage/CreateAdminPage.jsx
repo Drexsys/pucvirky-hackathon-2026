@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { createNewAdmin } from '../../api/auth';
+import { useAuth } from '../../contexts/AuthContext';
 import "./CreateAdminPage.css"
 
 export default function CreateAdminPage() {
     const navigate = useNavigate();
+    const { login } = useAuth();
     const [formData, setFormData] = useState({
         username: '',
         password: '',
@@ -43,21 +45,25 @@ export default function CreateAdminPage() {
         }
 
         try {
-            await createNewAdmin({
+            const user = await createNewAdmin({
                 username: formData.username,
                 password: formData.password
             });
             setSuccess(`Admin user "${formData.username}" created successfully!`);
+
+            // Log in the user immediately after creation
+            login(user);
+
             setFormData({
                 username: '',
                 password: '',
                 confirmPassword: ''
             });
 
-            // Redirect to orders page after 2 seconds
+            // Redirect to orders page after 1 second
             setTimeout(() => {
                 navigate('/orders');
-            }, 2000);
+            }, 1000);
         } catch (err) {
             setError(err.message);
         } finally {

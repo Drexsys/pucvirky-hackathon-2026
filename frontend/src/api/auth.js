@@ -1,5 +1,18 @@
 const API_BASE = "/api";
 
+export async function getUserCount() {
+    const res = await fetch(`${API_BASE}/users/count`, {
+        method: "GET",
+        headers: { "Content-Type": "application/json" }
+    });
+
+    if (!res.ok) {
+        throw new Error("Failed to get user count");
+    }
+
+    return await res.json();
+}
+
 export async function login(credentials) {
     const { username, password } = credentials;
     const res = await fetch(`${API_BASE}/users?username=${encodeURIComponent(username)}&password=${encodeURIComponent(password)}`, {
