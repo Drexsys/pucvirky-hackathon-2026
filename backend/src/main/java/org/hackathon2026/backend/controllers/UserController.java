@@ -27,7 +27,7 @@ public class UserController {
         return ResponseEntity.ok("");
     }
 
-    @PostMapping("/create")
+    @PostMapping
     public ResponseEntity<String> loginUser(
             @RequestParam String username,
             @RequestParam String password
@@ -37,6 +37,11 @@ public class UserController {
 
         userRepository.save(new User(username, password));
         return ResponseEntity.status(HttpStatus.CREATED).body("User created successfully");
+    }
+
+    @GetMapping("/count")
+    public Integer getCount() {
+        return (int) userRepository.count();
     }
 
 }
