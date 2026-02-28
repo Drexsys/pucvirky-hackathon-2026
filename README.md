@@ -19,12 +19,6 @@ The building can take some time
 Frontend - http://127.0.0.1:8080/
 
 Backend - http://127.0.0.1:8000/
-
-Then to use application you must to create user
-
-    http://127.0.0.1:8000/users/create?username={your username}&password={your password}
-    
-Do not forget user password because you cannot make more than 1
     
 ## Stop application
 
