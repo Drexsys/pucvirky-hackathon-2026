@@ -15,6 +15,10 @@ The building can take some time
 ## Start application 
 
     docker stack deploy -c stack.yml hackathon-2026
+
+Frontend - http://127.0.0.1:8080/
+
+Backend - http://127.0.0.1:8000/
     
 ## Stop application
 
