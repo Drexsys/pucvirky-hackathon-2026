@@ -75,6 +75,10 @@ export default function CreateAdminPage() {
         <div className="create-admin-page">
             <div className="create-admin-container">
                 <h1>Create New Admin</h1>
+                <div className="warning-message">
+                    ⚠️ <strong>Important:</strong> You can only create ONE admin account.
+                    Please remember your username and password - there is no password recovery option!
+                </div>
                 <form onSubmit={handleSubmit} className="create-admin-form">
                     <div className="form-group">
                         <label htmlFor="username">Username</label>
