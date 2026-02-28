@@ -1,10 +1,21 @@
-# запуск системи
-    python3 manage.py up
+# To run application you must have to download *docker*  
 
-# виключення системи
-    python3 manage.py down
-
-# запуск на вінді з 0
-    docker compose up --build
-    python manage.py up
+## Create network for docker
     
+    docker network create -d overlay hackathon-2026
+    
+## Build images
+    
+    docker build -t backend-hackathon-2026:1.0.0 ./backend
+    
+    docker build -t frontend-hackathon-2026:1.0.0 ./frontend
+    
+The building can take some time
+    
+## Start application 
+
+    docker stack deploy -c stack.yml hackathon-2026
+    
+## Stop application
+
+    docker stack rm hackathon-2026
