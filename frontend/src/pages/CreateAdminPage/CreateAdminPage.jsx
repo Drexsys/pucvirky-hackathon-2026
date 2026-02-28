@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { createNewAdmin } from '../../api/auth';
+import { useAuth } from '../../contexts/AuthContext';
 import "./CreateAdminPage.css"
 
 export default function CreateAdminPage() {
     const navigate = useNavigate();
+    const { login } = useAuth();
     const [formData, setFormData] = useState({
         username: '',
         password: '',
@@ -43,21 +45,25 @@ export default function CreateAdminPage() {
         }
 
         try {
-            await createNewAdmin({
+            const user = await createNewAdmin({
                 username: formData.username,
                 password: formData.password
             });
             setSuccess(`Admin user "${formData.username}" created successfully!`);
+
+            // Log in the user immediately after creation
+            login(user);
+
             setFormData({
                 username: '',
                 password: '',
                 confirmPassword: ''
             });
 
-            // Redirect to orders page after 2 seconds
+            // Redirect to orders page after 1 second
             setTimeout(() => {
                 navigate('/orders');
-            }, 2000);
+            }, 1000);
         } catch (err) {
             setError(err.message);
         } finally {
@@ -69,6 +75,10 @@ export default function CreateAdminPage() {
         <div className="create-admin-page">
             <div className="create-admin-container">
                 <h1>Create New Admin</h1>
+                <div className="warning-message">
+                    ⚠️ <strong>Important:</strong> You can only create ONE admin account.
+                    Please remember your username and password - there is no password recovery option!
+                </div>
                 <form onSubmit={handleSubmit} className="create-admin-form">
                     <div className="form-group">
                         <label htmlFor="username">Username</label>
