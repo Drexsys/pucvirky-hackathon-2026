@@ -27,16 +27,16 @@ public class UserController {
         return ResponseEntity.ok("");
     }
 
-    @PostMapping
+    @PostMapping("/create")
     public ResponseEntity<String> loginUser(
             @RequestParam String username,
             @RequestParam String password
     ) {
-        if (userRepository.existsByUsername(username))
+        if (userRepository.count() > 0)
             return ResponseEntity.status(HttpStatus.CONFLICT).body("Username already exists");
 
         userRepository.save(new User(username, password));
-        return ResponseEntity.status(HttpStatus.CREATED).body("");
+        return ResponseEntity.status(HttpStatus.CREATED).body("User created successfully");
     }
 
 }
