@@ -1,4 +1,4 @@
-# To run application you must have to download *docker*  
+# To run application you must have to download *docker swarm*  
 
 ## Create network for docker
     
