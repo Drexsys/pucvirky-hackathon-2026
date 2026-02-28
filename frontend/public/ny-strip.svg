@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="120" height="520" viewBox="0 0 120 520">
+  <defs>
+    <filter id="softShadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="#0b3a6a" flood-opacity="0.10"/>
+    </filter>
+  </defs>
+
+  <!-- DRONE (Font Awesome Free style, embedded as inline SVG path) -->
+  <!-- Note: simplified single-color icon look; you can recolor via fill -->
+  <g transform="translate(0,0)" filter="url(#softShadow)">
+    <!-- drone body -->
+    <path
+      d="M60 114c-10 0-18 8-18 18 0 4 1 8 4 11l-7 7c-2 2-2 5 0 7s5 2 7 0l8-8c2 1 4 1 6 1s4 0 6-1l8 8c2 2 5 2 7 0s2-5 0-7l-7-7c3-3 4-7 4-11 0-10-8-18-18-18zm-26-6c-7 0-12 5-12 12s5 12 12 12 12-5 12-12-5-12-12-12zm52 0c-7 0-12 5-12 12s5 12 12 12 12-5 12-12-5-12-12-12z"
+      fill="#0284c7"
+    />
+    <!-- small highlight -->
+    <circle cx="60" cy="132" r="4" fill="#ffffff" opacity="0.9"/>
+  </g>
+
+  <!-- NY OUTLINE -->
+  <!-- Replace the d="" below with the path data from generated ny-outline.svg -->
+  <g transform="translate(10,190)" filter="url(#softShadow)">
+    <path
+      id="ny-outline"
+      d="PASTE_D_ATTRIBUTE_FROM_ny-outline.svg_HERE"
+      fill="none"
+      stroke="#2563eb"
+      stroke-width="2.2"
+      stroke-linejoin="round"
+      vector-effect="non-scaling-stroke"
+      opacity="0.95"
+    />
+  </g>
+</svg>
