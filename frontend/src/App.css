@@ -9,6 +9,56 @@
   margin-top: 60px;
   display: flex;
   justify-content: center;
+  padding-left: 120px;
+  padding-right: 120px;
+
+  /*потрібно для бокових смуг */
+  position: relative;
+  overflow-x: clip;
+}
+
+/*бокові світло-сині смуги + малюнок(NY map + drone)*/
+.app-body::before,
+.app-body::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 120px;
+
+  background-color: #eaf4ff;
+  background-image: url("/ny-strip.svg");
+  background-repeat: no-repeat;
+  background-position: center 90px;
+  background-size: 92px auto;
+  background-attachment: fixed;
+
+  opacity: 0.95;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.app-body::before {
+  left: 0;
+  border-right: 1px solid #bfdbfe;
+}
+
+.app-body::after {
+  right: 0;
+  border-left: 1px solid #bfdbfe;
+}
+
+@media (max-width: 1024px) {
+  .app-body {
+    padding-left: 0;
+    padding-right: 0;
+  }
+
+  /*на менших екранах прибираємо смуги*/
+  .app-body::before,
+  .app-body::after {
+    display: none;
+  }
 }
 
 .app-main {
@@ -18,6 +68,10 @@
   padding: 32px 40px;
   min-height: calc(100vh - 60px);
   background: #f8f9fc;
+
+  /*щоб контент був поверх смуг*/
+  position: relative;
+  z-index: 1;
 }
 
 @media (max-width: 768px) {
