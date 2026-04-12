@@ -44,9 +44,8 @@ public class OrderController {
             countyJsonParse.start();
         }
 
-        if (geoJsonReadCity == null) {
+        if (geoJsonReadCity == null)
             geoJsonReadCity = new GeoJsonRead(new File(geoJsonCityPath), "NAME");
-        }
         // TODO: exception for undefined county or city
         var cityName = geoJsonReadCity.find(body.getLongitude(), body.getLatitude());
 
@@ -105,18 +104,14 @@ public class OrderController {
 
     @PostMapping("/import")
     public Long importOrders(@RequestParam("file") MultipartFile file) throws Exception {
-        String[][] pathParts = {
-                {geoJsonFilePath, "county"},
-                {geoJsonCityPath, "NAME"}
-        };
-
-        GeoJsonParse[] threadsParse = new GeoJsonParse[2];
-        for (byte i = 0; i < 2; i++) {
-            GeoJsonParse thread = new GeoJsonParse(
-                    pathParts[i][0], pathParts[i][1]);
-            thread.start();
-            threadsParse[i] = thread;
+        if (countyJsonParse == null) {
+            countyJsonParse = new GeoJsonParse(
+                    geoJsonFilePath, "county");
+            countyJsonParse.start();
         }
+
+        if (geoJsonReadCity == null)
+            geoJsonReadCity = new GeoJsonRead(new File(geoJsonCityPath), "NAME");
 
         List<OrderDto> ordersInfo = new CsvToBeanBuilder<OrderDto>(
                 new java.io.InputStreamReader(file.getInputStream(),
@@ -126,8 +121,7 @@ public class OrderController {
                 .build()
                 .parse();
 
-        for (GeoJsonParse thread : threadsParse)
-            thread.join();
+        countyJsonParse.join();
 
         int threadsCount = Runtime.getRuntime().availableProcessors();
         int ordersPerThread = ordersInfo.size() / threadsCount;
@@ -139,8 +133,8 @@ public class OrderController {
             var calculateTax = new CalculateTax(
                     ordersInfo,
                     start, end,
-                    threadsParse[0].getGeoJsonRead(),
-                    threadsParse[1].getGeoJsonRead(),
+                    countyJsonParse.getGeoJsonRead(),
+                    geoJsonReadCity,
                     orderService
             );
             calculateTax.start();
@@ -156,6 +150,10 @@ public class OrderController {
 
     public static String getCountyFilePath() {
         return countyFilePath;
+    }
+
+    private void initGeoJson() {
+
     }
 
 }
