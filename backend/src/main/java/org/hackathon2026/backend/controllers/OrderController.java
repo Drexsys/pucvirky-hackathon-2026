@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.ErrorResponseException;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -32,18 +33,25 @@ public class OrderController {
     private static final String geoJsonCityPath = "jsons/cityInfo.json";
     private static final String countyFilePath = "jsons/countyInfo.json";
 
+    private GeoJsonParse countyJsonParse = null;
+    private GeoJsonRead geoJsonReadCity = null;
+
     @PostMapping
     public ResponseEntity<String> postOrder(@Valid @RequestBody OrderDto body) throws Exception {
-        GeoJsonParse thread = new GeoJsonParse(
-                geoJsonFilePath, "county");
-        thread.start();
+        if (countyJsonParse == null) {
+            countyJsonParse = new GeoJsonParse(
+                    geoJsonFilePath, "county");
+            countyJsonParse.start();
+        }
 
-        File geoJsonFileCity = new File(geoJsonCityPath);
-        GeoJsonRead geoJsonReadCity = new GeoJsonRead(geoJsonFileCity, "NAME");
+        if (geoJsonReadCity == null) {
+            geoJsonReadCity = new GeoJsonRead(new File(geoJsonCityPath), "NAME");
+        }
+        // TODO: exception for undefined county or city
         var cityName = geoJsonReadCity.find(body.getLongitude(), body.getLatitude());
 
-        thread.join();
-        GeoJsonRead geoJsonRead = thread.getGeoJsonRead();
+        countyJsonParse.join();
+        GeoJsonRead geoJsonRead = countyJsonParse.getGeoJsonRead();
         var infoC = geoJsonRead.find(body.getLongitude(), body.getLatitude());
 
         CountyInfo countyInfo = CountyJsonRead.getCountyInfo(infoC.name(), countyFilePath);
