@@ -14,7 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.ErrorResponseException;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -38,18 +37,10 @@ public class OrderController {
 
     @PostMapping
     public ResponseEntity<String> postOrder(@Valid @RequestBody OrderDto body) throws Exception {
-        if (countyJsonParse == null) {
-            countyJsonParse = new GeoJsonParse(
-                    geoJsonFilePath, "county");
-            countyJsonParse.start();
-        }
-
-        if (geoJsonReadCity == null)
-            geoJsonReadCity = new GeoJsonRead(new File(geoJsonCityPath), "NAME");
+        initGeoJson();
         // TODO: exception for undefined county or city
         var cityName = geoJsonReadCity.find(body.getLongitude(), body.getLatitude());
 
-        countyJsonParse.join();
         GeoJsonRead geoJsonRead = countyJsonParse.getGeoJsonRead();
         var infoC = geoJsonRead.find(body.getLongitude(), body.getLatitude());
 
@@ -104,14 +95,7 @@ public class OrderController {
 
     @PostMapping("/import")
     public Long importOrders(@RequestParam("file") MultipartFile file) throws Exception {
-        if (countyJsonParse == null) {
-            countyJsonParse = new GeoJsonParse(
-                    geoJsonFilePath, "county");
-            countyJsonParse.start();
-        }
-
-        if (geoJsonReadCity == null)
-            geoJsonReadCity = new GeoJsonRead(new File(geoJsonCityPath), "NAME");
+        initGeoJson();
 
         List<OrderDto> ordersInfo = new CsvToBeanBuilder<OrderDto>(
                 new java.io.InputStreamReader(file.getInputStream(),
@@ -120,8 +104,6 @@ public class OrderController {
                 .withIgnoreLeadingWhiteSpace(true)
                 .build()
                 .parse();
-
-        countyJsonParse.join();
 
         int threadsCount = Runtime.getRuntime().availableProcessors();
         int ordersPerThread = ordersInfo.size() / threadsCount;
@@ -152,8 +134,17 @@ public class OrderController {
         return countyFilePath;
     }
 
-    private void initGeoJson() {
+    private void initGeoJson() throws Exception {
+        if (countyJsonParse == null) {
+            countyJsonParse = new GeoJsonParse(
+                    geoJsonFilePath, "county");
+            countyJsonParse.start();
+        }
 
+        if (geoJsonReadCity == null)
+            geoJsonReadCity = new GeoJsonRead(new File(geoJsonCityPath), "NAME");
+
+        countyJsonParse.join();
     }
 
 }
